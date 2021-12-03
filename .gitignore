@@ -1,0 +1,16 @@
+target/
+build/
+node_modules/
+
+
+.settings
+.project
+.classpath
+
+.idea
+*.iml
+**/.bsp/*
+.DS_Store
+
+.metals
+.bloop
