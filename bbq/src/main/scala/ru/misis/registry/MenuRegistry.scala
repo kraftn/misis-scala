@@ -6,9 +6,9 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.util.Timeout
 import ru.misis.model.{Item, Items, Menu, Menus}
 import ru.misis.registry.ItemRegistry.{CreateItem, GetItem}
-import spray.json.DefaultJsonProtocol
 
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{ExecutionContext, Future}
 
 
 class MenuRegistry(itemRegistry: ActorRef[ItemRegistry.Command])(implicit val system: ActorSystem[_], executionContext: ExecutionContext){
@@ -29,11 +29,18 @@ class MenuRegistry(itemRegistry: ActorRef[ItemRegistry.Command])(implicit val sy
                 } yield itemRegistry.ask(CreateItem(item, _))
                 replyTo ! ActionPerformed(s"Menu ${menuDto.name} created.")
                 registry(menus + menuDto.toMenu)
-            //todo case GetMenu(name, replyTo) =>
-                // 1. По name получить нужное Menu
-                // 2. Используя itemRegistry получить все Items из Menu
-                // 3. Сформировать MenuDto
-                // PS Может пригодится функция Future.sequence() делающая такое преобразование Seq[Future[_]] => Future[Seq[_]]
+            case GetMenu(name, replyTo) =>
+                menus.find(_.name == name).map { menu =>
+                    Future
+                        .sequence(for {
+                                itemName <- menu.items
+                            } yield itemRegistry.ask(GetItem(itemName, _)))
+                        .map{ maybeItems =>
+                            val items = maybeItems.flatMap(_.maybeItem)
+                            replyTo ! GetMenuResponse(Some(MenuDto(name, Items(items))))
+                        }
+                }
+                Behaviors.same
             case DeleteMenu(name, replyTo) =>
                 replyTo ! ActionPerformed(s"Menu $name updated.")
                 registry(menus.filterNot(_.name == name))
@@ -57,7 +64,4 @@ object MenuRegistry {
 
     final case class GetMenuResponse(maybe: Option[MenuDto])
     final case class ActionPerformed(description: String)
-
-
-
 }
