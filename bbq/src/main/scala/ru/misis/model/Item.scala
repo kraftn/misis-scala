@@ -1,5 +1,23 @@
 package ru.misis.model
 
-case class Item(name: String, price: Double)
+import slick.lifted.Tag
+import slick.jdbc.PostgresProfile.api._
 
-case class Items(items: Seq[Item])
+
+case class Item(id: Int, name: String, price: Double)
+
+trait ItemRepo {
+
+    class ItemTable(tag: Tag) extends Table[Item](tag, "Item") {
+        val id = column[Int]("id", O.PrimaryKey)
+        val name = column[String]("name")
+        val price = column[Double]("price")
+        def * = (
+            id,
+            name,
+            price
+        ) <> ((Item.apply _).tupled, Item.unapply)
+    }
+
+    val itemTable = TableQuery[ItemTable]
+}
