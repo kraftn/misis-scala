@@ -7,8 +7,7 @@ import ru.misis.services.ItemService
 
 import scala.concurrent.ExecutionContext
 
-abstract class ItemRegistry(itemRegistry: ActorRef[ItemRegistry.Command])
-                           (implicit val system: ActorSystem[_], executionContext: ExecutionContext)
+abstract class ItemRegistry(implicit val system: ActorSystem[_], executionContext: ExecutionContext)
     extends ItemService{
 
     import ItemRegistry._

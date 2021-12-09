@@ -4,7 +4,7 @@ import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.util.Timeout
-import ru.misis.model.{Item, Items, Menu, Menus}
+import ru.misis.model.{Item, Menu, Menus}
 import ru.misis.registry.ItemRegistry.{CreateItem, GetItem}
 
 
@@ -25,7 +25,7 @@ class MenuRegistry(itemRegistry: ActorRef[ItemRegistry.Command])(implicit val sy
                 Behaviors.same
             case CreateMenu(menuDto, replyTo) =>
                 for {
-                    item <- menuDto.items.items
+                    item <- menuDto.items
                 } yield itemRegistry.ask(CreateItem(item, _))
                 replyTo ! ActionPerformed(s"Menu ${menuDto.name} created.")
                 registry(menus + menuDto.toMenu)
@@ -37,7 +37,7 @@ class MenuRegistry(itemRegistry: ActorRef[ItemRegistry.Command])(implicit val sy
                             } yield itemRegistry.ask(GetItem(itemName, _)))
                         .map{ maybeItems =>
                             val items = maybeItems.flatMap(_.maybeItem)
-                            replyTo ! GetMenuResponse(Some(MenuDto(name, Items(items))))
+                            replyTo ! GetMenuResponse(Some(MenuDto(name, items)))
                         }
                 }
                 Behaviors.same
@@ -56,11 +56,9 @@ object MenuRegistry {
 
 
     case class MenusDto(names: Seq[String])
-    case class MenuDto(name: String, items: Items){
-        def toMenu: Menu = Menu(name, items.items.map(_.name))
+    case class MenuDto(name: String, items: Seq[Item]){
+        def toMenu: Menu = Menu(name, items.map(_.name))
     }
-    implicit def toMenu(dto: MenuDto): Menu = Menu(dto.name, dto.items.items.map(_.name))
-
 
     final case class GetMenuResponse(maybe: Option[MenuDto])
     final case class ActionPerformed(description: String)

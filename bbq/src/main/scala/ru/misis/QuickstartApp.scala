@@ -5,8 +5,10 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import ru.misis.registry.{ItemRegistry, MenuRegistry, UserRegistry}
-import ru.misis.routes.{MenuRoutes, UserRoutes}
+import ru.misis.routes.{ItemRoutes, MenuRoutes, UserRoutes}
 import akka.http.scaladsl.server.Directives._
+import ru.misis.services.{InitDB, ItemServiceImpl}
+import slick.jdbc.PostgresProfile.api._
 
 import scala.util.Failure
 import scala.util.Success
@@ -29,23 +31,35 @@ object QuickstartApp {
         }
     }
 
+    lazy val db = Database.forConfig("database.postgres")
+
     //#start-http-server
     def main(args: Array[String]): Unit = {
         //#server-bootstrapping
         val rootBehavior = Behaviors.setup[Nothing] { context =>
+
             implicit val contextImpl = context.system
-            implicit val exContenxt = contextImpl.executionContext
+            implicit val executionContext = contextImpl.executionContext
+
+            trait init {
+                def db = QuickstartApp.db
+                implicit val executionContext = contextImpl.executionContext
+            }
+
+            new InitDB(db).prepareRepository()
 
             val userRegistryActor = context.spawn(UserRegistry(), "UserRegistryActor")
             context.watch(userRegistryActor)
-            val itemRegistryActor = context.spawn(ItemRegistry.apply(), "ItemRegistryActor")
+            val itemRegistry = new ItemRegistry() with ItemServiceImpl with init
+            val itemRegistryActor = context.spawn(itemRegistry(), "ItemRegistryActor")
             context.watch(itemRegistryActor)
             val menuRegistryActor = context.spawn(new MenuRegistry(itemRegistryActor).apply(), "MenuRegistryActor")
             context.watch(menuRegistryActor)
 
             val userRoutes = new UserRoutes(userRegistryActor)(context.system)
             val menuRoutes = new MenuRoutes(menuRegistryActor)
-            startHttpServer(userRoutes.routes ~ menuRoutes.routes)(context.system)
+            val itemRoutes = new ItemRoutes(itemRegistryActor)
+            startHttpServer(userRoutes.routes ~ menuRoutes.routes ~ itemRoutes.routes)(context.system)
 
             Behaviors.empty
         }

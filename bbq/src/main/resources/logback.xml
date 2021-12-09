@@ -17,4 +17,6 @@
         <appender-ref ref="ASYNC"/>
     </root>
 
+    <logger name="slick.jdbc.JdbcBackend.statement"  level="DEBUG" />
+
 </configuration>
