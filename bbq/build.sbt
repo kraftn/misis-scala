@@ -22,6 +22,7 @@ lazy val root = (project in file(".")).
 
             "com.typesafe.akka" %% "akka-http-testkit"        % akkaHttpVersion % Test,
             "com.typesafe.akka" %% "akka-actor-testkit-typed" % akkaVersion     % Test,
-            "org.scalatest" %% "scalatest" % "3.1.4" % Test
+            "org.scalatest"     %% "scalatest"                % "3.1.4"         % Test,
+            "com.opentable.components" % "otj-pg-embedded"    % "0.13.3"        % Test
         )
     )

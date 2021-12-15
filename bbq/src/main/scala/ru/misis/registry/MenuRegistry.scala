@@ -4,47 +4,32 @@ import akka.actor.typed.scaladsl.AskPattern._
 import akka.actor.typed.{ActorRef, ActorSystem, Behavior}
 import akka.actor.typed.scaladsl.Behaviors
 import akka.util.Timeout
-import ru.misis.model.{Item, Menu, Menus}
+import ru.misis.model.{Item, Menu}
 import ru.misis.registry.ItemRegistry.{CreateItem, GetItem}
-
+import ru.misis.services.MenuService
 
 import scala.concurrent.{ExecutionContext, Future}
 
 
-class MenuRegistry(itemRegistry: ActorRef[ItemRegistry.Command])(implicit val system: ActorSystem[_], executionContext: ExecutionContext){
+abstract class MenuRegistry(implicit val system: ActorSystem[_], executionContext: ExecutionContext) extends MenuService{
     import MenuRegistry._
     private implicit val timeout = Timeout.create(system.settings.config.getDuration("my-app.routes.ask-timeout"))
 
-    def apply(): Behavior[Command] = registry(Set.empty)
+    def apply(): Behavior[Command] =  Behaviors.receiveMessage {
+        case GetMenus(replyTo) =>
+            getMenus().map(replyTo ! _)
+            Behaviors.same
+        case CreateMenu(menuDto, replyTo) =>
+            createMenu(menuDto).map(_ => replyTo ! ActionPerformed(s"Menu ${menuDto.name} created."))
+            Behaviors.same
+        case GetMenu(name, replyTo) =>
+            getMenu(name).map(replyTo ! GetMenuResponse(_))
+            Behaviors.same
+        case DeleteMenu(name, replyTo) =>
+            deleteMenu(name).map(_ => replyTo ! ActionPerformed(s"Menu $name updated."))
+            Behaviors.same
+    }
 
-    private def registry(menus: Set[Menu]): Behavior[Command] =
-        Behaviors.receiveMessage {
-            case GetMenus(replyTo) =>
-                val result = menus.map(_.name)
-                replyTo ! MenusDto(result.toSeq)
-                Behaviors.same
-            case CreateMenu(menuDto, replyTo) =>
-                for {
-                    item <- menuDto.items
-                } yield itemRegistry.ask(CreateItem(item, _))
-                replyTo ! ActionPerformed(s"Menu ${menuDto.name} created.")
-                registry(menus + menuDto.toMenu)
-            case GetMenu(name, replyTo) =>
-                menus.find(_.name == name).map { menu =>
-                    Future
-                        .sequence(for {
-                                itemName <- menu.items
-                            } yield itemRegistry.ask(GetItem(itemName, _)))
-                        .map{ maybeItems =>
-                            val items = maybeItems.flatMap(_.maybeItem)
-                            replyTo ! GetMenuResponse(Some(MenuDto(name, items)))
-                        }
-                }
-                Behaviors.same
-            case DeleteMenu(name, replyTo) =>
-                replyTo ! ActionPerformed(s"Menu $name updated.")
-                registry(menus.filterNot(_.name == name))
-        }
 }
 
 object MenuRegistry {
@@ -56,10 +41,10 @@ object MenuRegistry {
 
 
     case class MenusDto(names: Seq[String])
-    case class MenuDto(name: String, items: Seq[Item]){
-        def toMenu: Menu = Menu(name, items.map(_.name))
-    }
+    case class MenuDto(id: Int, name: String, items: Seq[Item])
 
     final case class GetMenuResponse(maybe: Option[MenuDto])
     final case class ActionPerformed(description: String)
+
+    case class Menus(menus: Seq[Menu])
 }

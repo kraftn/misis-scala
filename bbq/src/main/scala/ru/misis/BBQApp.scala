@@ -7,14 +7,14 @@ import akka.http.scaladsl.server.Route
 import ru.misis.registry.{ItemRegistry, MenuRegistry, UserRegistry}
 import ru.misis.routes.{ItemRoutes, MenuRoutes, UserRoutes}
 import akka.http.scaladsl.server.Directives._
-import ru.misis.services.{InitDB, ItemServiceImpl}
+import ru.misis.services.{InitDB, ItemServiceImpl, MenuServiceImpl}
 import slick.jdbc.PostgresProfile.api._
 
 import scala.util.Failure
 import scala.util.Success
 
 //#main-class
-object QuickstartApp {
+object BBQApp {
     //#start-http-server
     private def startHttpServer(routes: Route)(implicit system: ActorSystem[_]): Unit = {
         // Akka HTTP still needs a classic ActorSystem to start
@@ -42,7 +42,7 @@ object QuickstartApp {
             implicit val executionContext = contextImpl.executionContext
 
             trait init {
-                def db = QuickstartApp.db
+                def db = BBQApp.db
                 implicit val executionContext = contextImpl.executionContext
             }
 
@@ -53,7 +53,8 @@ object QuickstartApp {
             val itemRegistry = new ItemRegistry() with ItemServiceImpl with init
             val itemRegistryActor = context.spawn(itemRegistry(), "ItemRegistryActor")
             context.watch(itemRegistryActor)
-            val menuRegistryActor = context.spawn(new MenuRegistry(itemRegistryActor).apply(), "MenuRegistryActor")
+            val menuRegistry = new MenuRegistry() with MenuServiceImpl with init
+            val menuRegistryActor = context.spawn(menuRegistry(), "MenuRegistryActor")
             context.watch(menuRegistryActor)
 
             val userRoutes = new UserRoutes(userRegistryActor)(context.system)

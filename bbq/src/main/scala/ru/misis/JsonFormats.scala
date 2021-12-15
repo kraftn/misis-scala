@@ -22,7 +22,7 @@ object JsonFormats  {
   implicit val menusJsonFormat = jsonFormat1(MenusDto)
   implicit val itemJsonFormat = jsonFormat3(Item)
   implicit val itemsJsonFormat = jsonFormat1(Items)
-  implicit val menuJsonFormat = jsonFormat2(MenuDto)
+  implicit val menuJsonFormat = jsonFormat3(MenuDto)
   implicit val actionPerformedJsonFormat2 = jsonFormat1(MenuRegistry.ActionPerformed)
   implicit val actionPerformedJsonFormat3 = jsonFormat1(ItemRegistry.ActionPerformed)
 }

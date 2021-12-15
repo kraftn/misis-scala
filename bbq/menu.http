@@ -7,13 +7,20 @@ POST http://localhost:8080/menus
 Content-Type: application/json
 
 {
+  "id": 1,
   "name": "daily",
-  "items": {
-    "items": [
-      {"name": "eggs", "price": 100},
-      {"name": "steak", "price": 1000}
-    ]
-  }
+  "items": [
+    {
+      "id": 1,
+      "name": "eggs",
+      "price": 100
+    },
+    {
+      "id": 2,
+      "name": "steak",
+      "price": 1000
+    }
+  ]
 }
 
 ###
