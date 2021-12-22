@@ -37,4 +37,10 @@ trait ItemServiceImpl extends ItemService with ItemRepo{
         }
     }
 
+    def update(id: Int, name: String, price: Double) = {
+        db.run{
+            itemTable.filter(_.id === id).map(item => (item.name, item.price)).update((name, price))
+        }
+    }
+
 }
