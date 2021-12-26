@@ -24,7 +24,7 @@ trait MenuRepo {
         ) <> ((MenuItem.apply _).tupled, MenuItem.unapply)
     }
 
-    class MenuTable(tag: Tag)  extends Table[Menu](tag, "Menu") {
+    class MenuTable(tag: Tag) extends Table[Menu](tag, "Menu") {
         val id = column[Int]("id", O.PrimaryKey)
         val name = column[String]("name")
 

@@ -13,12 +13,12 @@ Content-Type: application/json
     {
       "id": 1,
       "name": "eggs",
-      "price": 100
+      "price": 100.0
     },
     {
       "id": 2,
       "name": "steak",
-      "price": 1000
+      "price": 1000.0
     }
   ]
 }

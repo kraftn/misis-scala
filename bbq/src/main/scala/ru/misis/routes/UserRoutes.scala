@@ -6,7 +6,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import akka.util.Timeout
-import ru.misis.model.{User, Users}
+import ru.misis.model.User
 import ru.misis.registry.UserRegistry
 import ru.misis.registry.UserRegistry._
 

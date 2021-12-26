@@ -26,5 +26,3 @@ lazy val root = (project in file(".")).
             "com.opentable.components" % "otj-pg-embedded"    % "0.13.3"        % Test
         )
     )
-
-enablePlugins(JavaAppPackaging)

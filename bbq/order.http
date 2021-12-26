@@ -1,0 +1,97 @@
+###
+GET http://localhost:8080/orders
+Content-Type: application/json
+
+###
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "item": {
+    "id": 1,
+    "name": "eggs",
+    "price": 100.0
+  },
+  "menu": {
+    "id": 1,
+    "name": "daily"
+  },
+  "menuPrice": 100.0,
+  "user": {
+    "id": 1,
+    "name": "John",
+    "age": 20,
+    "countryOfResidence": "RF"
+  },
+  "quantity": 2,
+  "status": "Оплачен"
+}
+
+###
+GET http://localhost:8080/order/1
+Content-Type: application/json
+
+###
+PUT http://localhost:8080/order/1
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "item": {
+    "id": 2,
+    "name": "steak",
+    "price": 1000.0
+  },
+  "menu": {
+    "id": 1,
+    "name": "daily"
+  },
+  "menuPrice": 1000.0,
+  "user": {
+    "id": 1,
+    "name": "John",
+    "age": 20,
+    "countryOfResidence": "RF"
+  },
+  "quantity": 2,
+  "status": "Оплачен"
+}
+
+###
+PUT http://localhost:8080/order/1?status=Выполнен
+Content-Type: application/json
+
+###
+POST http://localhost:8080/orders
+Content-Type: application/json
+
+{
+  "orderId": 2,
+  "item": {
+    "id": 1,
+    "name": "eggs",
+    "price": 100.0
+  },
+  "menu": {
+    "id": 1,
+    "name": "daily"
+  },
+  "menuPrice": 100.0,
+  "user": {
+    "id": 1,
+    "name": "John",
+    "age": 20,
+    "countryOfResidence": "RF"
+  },
+  "quantity": 5,
+  "status": "Оплачен"
+}
+
+###
+GET http://localhost:8080/orders/Выполнен
+Content-Type: application/json
+
+###
+DELETE http://localhost:8080/order/1
+Content-Type: application/json

@@ -39,12 +39,11 @@ object MenuRegistry {
     case class GetMenu(name: String, replyTo: ActorRef[GetMenuResponse]) extends Command
     case class DeleteMenu(name: String, replyTo: ActorRef[ActionPerformed]) extends Command
 
-
     case class MenusDto(names: Seq[String])
     case class MenuDto(id: Int, name: String, items: Seq[Item])
 
     final case class GetMenuResponse(maybe: Option[MenuDto])
     final case class ActionPerformed(description: String)
 
-    case class Menus(menus: Seq[Menu])
+    // case class Menus(menus: Seq[Menu])
 }

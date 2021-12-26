@@ -59,7 +59,7 @@ class MenuRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
                 contentType should ===(ContentTypes.`application/json`)
 
                 // and no entries should be in the list:
-                entityAs[String] should ===("""{"names":[1]}""")
+                entityAs[String] should ===("""{"names":[]}""")
             }
         }
 
@@ -112,6 +112,4 @@ class MenuRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with Sc
         }
 
     }
-
-
 }
