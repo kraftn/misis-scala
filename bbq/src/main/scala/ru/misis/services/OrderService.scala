@@ -1,31 +1,32 @@
 package ru.misis.services
 
-import ru.misis.model.{ItemRepo, MenuItem, MenuRepo, Order, OrderRepo, UserRepo}
-import ru.misis.registry.OrderRegistry.{OrderDto, OrdersDto}
+import ru.misis.model.{ItemRepo, MenuItem, MenuRepo, Order, OrderItem, OrderRepo, UserRepo}
+import ru.misis.registry.OrderRegistry.{OrderDto, OrderItemDto, OrdersDto}
 import slick.jdbc.PostgresProfile.api._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 trait OrderService {
-    def createOrder(order: OrderDto): Future[Option[Future[Int]]]
+    def createOrder(order: OrderDto): Future[Unit]
     def changeStatus(id: Int, status: String): Future[Unit]
     def getOrders: Future[OrdersDto]
     def getOrdersByStatus(status: String): Future[OrdersDto]
     def getOrder(id: Int): Future[Option[OrderDto]]
-    def updateOrder(id: Int, order: OrderDto): Future[Option[Future[Int]]]
-    def deleteOrder(id: Int): Future[Int]
+    def updateOrder(id: Int, order: OrderDto): Future[Unit]
+    def deleteOrder(id: Int): Future[Unit]
 }
 
 trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with MenuRepo with ItemRepo {
     def db: Database
     implicit def executionContext: ExecutionContext
 
-    override def createOrder(orderDto: OrderDto): Future[Option[Future[Int]]] = {
-        fromOrderDto(orderDto).map { maybe =>
-            maybe.map { order =>
-                db.run {
-                    orderTable += order
-                }
+    override def createOrder(orderDto: OrderDto): Future[Unit] = {
+        Future.sequence(formOrderItems(orderDto)).map { maybeOrderItems =>
+            db.run {
+                DBIO.seq(
+                    orderTable += Order(orderDto.id, orderDto.user.id, orderDto.status),
+                    orderItemTable ++= maybeOrderItems.flatten
+                ).transactionally
             }
         }
     }
@@ -38,14 +39,20 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
         db.run {
             orderTable
                 .join(userTable).on{ case (order, user) => order.userId === user.id }
-                .join(menuItemTable).on{ case ((order, user), menuItem) => order.menuItemId === menuItem.id }
-                .join(menuTable).on{ case ((_, menuitem), menu) => menuitem.menuId === menu.id }
+                .join(orderItemTable).on{ case ((order, _), orderItem) => order.id === orderItem.orderId }
+                .join(menuItemTable).on{ case ((_, orderItem), menuItem) => orderItem.menuItemId === menuItem.id }
+                .join(menuTable).on{ case ((_, menuItem), menu) => menuItem.menuId === menu.id }
                 .join(itemTable).on{ case (((_, menuItem), menu), item) => menuItem.itemId === item.id }
                 .result
-        }.map(seq => seq.map {
-            case ((((order, user), menuItem), menu), item) =>
-                OrderDto(order.id, item, menu, menuItem.price, user, order.quantity, order.status)
-        }).map(OrdersDto)
+        }.map { seq =>
+            seq.map { case (((((order, user), orderItem), menuItem), menu), item) =>
+                (order, user, OrderItemDto(menu, item, menuItem.price, orderItem.quantity))
+            }.groupBy { case (order, user, _) =>
+                (order, user)
+            }.map { case ((order, user), seq) =>
+                OrderDto(order.id, user, order.status, seq.map { case (_, _, orderItem) => orderItem })
+            }.toSeq
+        }.map(OrdersDto)
     }
 
     override def getOrdersByStatus(status: String): Future[OrdersDto] = {
@@ -53,28 +60,49 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
     }
 
     override def getOrder(id: Int): Future[Option[OrderDto]] = {
-        getOrders.map(ordersDto => ordersDto.orders.find(orderDto => orderDto.orderId == id))
+        getOrders.map(ordersDto => ordersDto.orders.find(orderDto => orderDto.id == id))
     }
 
-    def updateOrder(id: Int, orderDto: OrderDto): Future[Option[Future[Int]]] = {
-        fromOrderDto(orderDto).map { maybe =>
-            maybe.map { order =>
-                db.run(orderTable.filter(_.id === id).update(order))
+    override def updateOrder(id: Int, orderDto: OrderDto): Future[Unit] = {
+        Future.sequence(formOrderItems(orderDto)).map { maybeOrderItems =>
+            db.run {
+                orderTable.filter(_.id === id).update(Order(orderDto.id, orderDto.user.id, orderDto.status)).map { nRows =>
+                    if (nRows > 0) {
+                        db.run {
+                            DBIO.seq(
+                                orderItemTable.filter(_.orderId === id).delete,
+                                orderItemTable ++= maybeOrderItems.flatten
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
-    override def deleteOrder(id: Int): Future[Int] = {
-        db.run(orderTable.filter(_.id === id).delete)
+    override def deleteOrder(id: Int): Future[Unit] = {
+        db.run {
+            DBIO.seq(
+                orderItemTable.filter(_.orderId === id).delete,
+                orderTable.filter(_.id === id).delete
+            )
+        }
     }
 
-    private def fromOrderDto(orderDto: OrderDto): Future[Option[Order]] = {
-        db.run {
-            menuItemTable.filter {
-                menuItem => menuItem.menuId === orderDto.menu.id && menuItem.itemId === orderDto.item.id
-            }.result.headOption
-        }.map(maybe => maybe.map { menuItem =>
-            Order(orderDto.orderId, menuItem.id, orderDto.user.id, orderDto.quantity, orderDto.status)
-        })
+    private def formOrderItems(orderDto: OrderDto): Seq[Future[Option[OrderItem]]] = {
+        orderDto.orderItems.map { orderItemDto =>
+            db.run {
+                menuItemTable.filter { menuItem =>
+                    menuItem.menuId === orderItemDto.menu.id && menuItem.itemId === orderItemDto.item.id
+                }.result.headOption
+            }.map { maybeMenuItem =>
+                maybeMenuItem.map { menuItem =>
+                    OrderItem(
+                        orderId = orderDto.id,
+                        menuItemId = menuItem.id,
+                        quantity = orderItemDto.quantity)
+                }
+            }
+        }
     }
 }

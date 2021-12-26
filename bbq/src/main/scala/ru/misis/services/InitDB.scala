@@ -13,6 +13,7 @@ class InitDB(db: Database) extends ItemRepo with MenuRepo with UserRepo with Ord
             menuItemTable.schema.createIfNotExists,
             menuTable.schema.createIfNotExists,
             userTable.schema.createIfNotExists,
+            orderItemTable.schema.createIfNotExists,
             orderTable.schema.createIfNotExists
         )}
     }
@@ -24,6 +25,7 @@ class InitDB(db: Database) extends ItemRepo with MenuRepo with UserRepo with Ord
             menuItemTable.schema.dropIfExists,
             menuTable.schema.dropIfExists,
             userTable.schema.dropIfExists,
+            orderItemTable.schema.dropIfExists,
             orderTable.schema.dropIfExists
         )}
     }

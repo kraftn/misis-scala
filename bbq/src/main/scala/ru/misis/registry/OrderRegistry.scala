@@ -16,8 +16,8 @@ abstract class OrderRegistry (implicit val system: ActorSystem[_], executionCont
 
     def apply(): Behavior[Command] =  Behaviors.receiveMessage {
         case CreateOrder(order, replyTo) =>
-            val orderId = order.orderId
-            createOrder(order).map(_ => replyTo ! ActionPerformed(s"Order $orderId created."))
+            val orderId = order.id
+            createOrder(order).map(_ => replyTo ! ActionPerformed(s"Order №$orderId created."))
             Behaviors.same
         case ChangeStatus(id, status, replyTo) =>
             changeStatus(id, status).map(_ => replyTo ! ActionPerformed(s"Status has been changed to $status."))
@@ -32,10 +32,10 @@ abstract class OrderRegistry (implicit val system: ActorSystem[_], executionCont
             getOrder(id).map(replyTo ! GetOrderResponse(_))
             Behaviors.same
         case UpdateOrder(id, order, replyTo) =>
-            updateOrder(id, order).map(_ => replyTo ! ActionPerformed(s"Order $id updated."))
+            updateOrder(id, order).map(_ => replyTo ! ActionPerformed(s"Order №$id updated."))
             Behaviors.same
         case DeleteOrder(id, replyTo) =>
-            deleteOrder(id).map(_ => replyTo ! ActionPerformed(s"Order $id deleted."))
+            deleteOrder(id).map(_ => replyTo ! ActionPerformed(s"Order №$id deleted."))
             Behaviors.same
     }
 }
@@ -50,8 +50,8 @@ object OrderRegistry {
     case class UpdateOrder(id: Int, order: OrderDto, replyTo: ActorRef[ActionPerformed]) extends Command
     case class DeleteOrder(id: Int, replyTo: ActorRef[ActionPerformed]) extends Command
 
-    case class OrderDto(orderId: Int, item: Item, menu: Menu, menuPrice: Double,
-                        user: User, quantity: Int, status: String)
+    case class OrderItemDto(menu: Menu, item: Item, menuPrice: Double, quantity: Int)
+    case class OrderDto(id: Int, user: User, status: String, orderItems: Seq[OrderItemDto])
     case class OrdersDto(orders: Seq[OrderDto])
 
     final case class GetOrderResponse(maybe: Option[OrderDto])

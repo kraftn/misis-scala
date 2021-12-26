@@ -3,7 +3,7 @@ package ru.misis
 import ru.misis.model.{Item, Menu, User}
 import ru.misis.registry.ItemRegistry.Items
 import ru.misis.registry.MenuRegistry.{MenuDto, MenusDto}
-import ru.misis.registry.OrderRegistry.{OrderDto, OrdersDto}
+import ru.misis.registry.OrderRegistry.{OrderDto, OrderItemDto, OrdersDto}
 import ru.misis.registry.UserRegistry.Users
 import ru.misis.registry.{ItemRegistry, MenuRegistry, OrderRegistry, UserRegistry}
 
@@ -30,7 +30,8 @@ object JsonFormats  {
   implicit val actionPerformedJsonFormat4 = jsonFormat1(OrderRegistry.ActionPerformed)
 
   implicit val menuJsonFormat = jsonFormat2(Menu)
-  implicit val orderJsonFormat = jsonFormat7(OrderDto)
+  implicit val orderItemJsonFormat = jsonFormat4(OrderItemDto)
+  implicit val orderJsonFormat = jsonFormat4(OrderDto)
   implicit val ordersJsonFormat = jsonFormat1(OrdersDto)
 }
 //#json-formats
