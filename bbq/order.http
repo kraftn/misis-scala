@@ -8,12 +8,7 @@ Content-Type: application/json
 
 {
   "id": 1,
-  "user": {
-    "id": 1,
-    "name": "John",
-    "age": 20,
-    "countryOfResidence": "RF"
-  },
+  "userId": 1,
   "status": "Оплачен",
   "orderItems": [
     {
@@ -55,27 +50,9 @@ Content-Type: application/json
 
 {
   "id": 1,
-  "user": {
-    "id": 1,
-    "name": "John",
-    "age": 20,
-    "countryOfResidence": "RF"
-  },
+  "userId": 1,
   "status": "Оплачен",
   "orderItems": [
-    {
-      "menu": {
-        "id": 1,
-        "name": "daily"
-      },
-      "item": {
-        "id": 1,
-        "name": "eggs",
-        "price": 100.0
-      },
-      "menuPrice": 100.0,
-      "quantity": 2
-    },
     {
       "menu": {
         "id": 1,
@@ -115,12 +92,7 @@ Content-Type: application/json
 
 {
   "id": 2,
-  "user": {
-    "id": 2,
-    "name": "Маша",
-    "age": 21,
-    "countryOfResidence": "RF"
-  },
+  "userId": 2,
   "status": "Оплачен",
   "orderItems": [
     {

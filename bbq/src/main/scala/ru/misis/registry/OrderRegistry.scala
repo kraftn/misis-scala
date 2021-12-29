@@ -51,7 +51,7 @@ object OrderRegistry {
     case class DeleteOrder(id: Int, replyTo: ActorRef[ActionPerformed]) extends Command
 
     case class OrderItemDto(menu: Menu, item: Item, menuPrice: Double, quantity: Int)
-    case class OrderDto(id: Int, user: User, status: String, orderItems: Seq[OrderItemDto])
+    case class OrderDto(id: Int, userId: Int, status: String, orderItems: Seq[OrderItemDto])
     case class OrdersDto(orders: Seq[OrderDto])
 
     final case class GetOrderResponse(maybe: Option[OrderDto])

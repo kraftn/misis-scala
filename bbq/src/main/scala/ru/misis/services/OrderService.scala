@@ -24,7 +24,7 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
         Future.sequence(formOrderItems(orderDto)).map { maybeOrderItems =>
             db.run {
                 DBIO.seq(
-                    orderTable += Order(orderDto.id, orderDto.user.id, orderDto.status),
+                    orderTable += Order(orderDto.id, orderDto.userId, orderDto.status),
                     orderItemTable ++= maybeOrderItems.flatten
                 ).transactionally
             }
@@ -38,19 +38,18 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
     override def getOrders: Future[OrdersDto] = {
         db.run {
             orderTable
-                .join(userTable).on{ case (order, user) => order.userId === user.id }
-                .join(orderItemTable).on{ case ((order, _), orderItem) => order.id === orderItem.orderId }
+                .join(orderItemTable).on{ case (order, orderItem) => order.id === orderItem.orderId }
                 .join(menuItemTable).on{ case ((_, orderItem), menuItem) => orderItem.menuItemId === menuItem.id }
                 .join(menuTable).on{ case ((_, menuItem), menu) => menuItem.menuId === menu.id }
                 .join(itemTable).on{ case (((_, menuItem), menu), item) => menuItem.itemId === item.id }
                 .result
         }.map { seq =>
-            seq.map { case (((((order, user), orderItem), menuItem), menu), item) =>
-                (order, user, OrderItemDto(menu, item, menuItem.price, orderItem.quantity))
-            }.groupBy { case (order, user, _) =>
-                (order, user)
-            }.map { case ((order, user), seq) =>
-                OrderDto(order.id, user, order.status, seq.map { case (_, _, orderItem) => orderItem })
+            seq.map { case ((((order, orderItem), menuItem), menu), item) =>
+                (order, OrderItemDto(menu, item, menuItem.price, orderItem.quantity))
+            }.groupBy { case (order, _) =>
+                order
+            }.map { case (order, seq) =>
+                OrderDto(order.id, order.userId, order.status, seq.map { case (_, orderItem) => orderItem })
             }.toSeq
         }.map(OrdersDto)
     }
@@ -64,19 +63,19 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
     }
 
     override def updateOrder(id: Int, orderDto: OrderDto): Future[Unit] = {
-        Future.sequence(formOrderItems(orderDto)).map { maybeOrderItems =>
-            db.run {
-                orderTable.filter(_.id === id).update(Order(orderDto.id, orderDto.user.id, orderDto.status)).map { nRows =>
-                    if (nRows > 0) {
-                        db.run {
-                            DBIO.seq(
-                                orderItemTable.filter(_.orderId === id).delete,
-                                orderItemTable ++= maybeOrderItems.flatten
-                            )
-                        }
-                    }
-                }
-            }
+        val newItemsQuery = Future.sequence(formOrderItems(orderDto)).map(_.flatten)
+        val savedItemsQuery = db.run(orderItemTable.filter(_.orderId === id).result)
+        for {
+            newOrderItems <- newItemsQuery
+            savedOrderItems <- savedItemsQuery
+        } yield db.run {
+            DBIO.seq(
+                orderTable.filter(_.id === id).update(Order(orderDto.id, orderDto.userId, orderDto.status)),
+                orderItemTable.filter { orderItem =>
+                    orderItem.id.inSet(savedOrderItems.diff(newOrderItems).map(_.id))
+                }.delete,
+                orderItemTable ++= newOrderItems.diff(savedOrderItems)
+            ).transactionally
         }
     }
 
@@ -85,7 +84,7 @@ trait OrderServiceImpl extends OrderService with OrderRepo with UserRepo with Me
             DBIO.seq(
                 orderItemTable.filter(_.orderId === id).delete,
                 orderTable.filter(_.id === id).delete
-            )
+            ).transactionally
         }
     }
 

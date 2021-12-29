@@ -107,7 +107,7 @@ class OrderRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with S
         }
 
         "добавляет новый заказ (POST /orders)" in {
-            val order = OrderDto(1, User(1, "John", 20, "RF"), "Paid",
+            val order = OrderDto(1, 1, "Paid",
                 Seq(OrderItemDto(Menu(1, "daily"), Item(1, "eggs", 100.0), 100.0, 2),
                     OrderItemDto(Menu(1, "daily"), Item(2, "steak", 1000.0), 1000.0, 1)
                 )
@@ -138,15 +138,14 @@ class OrderRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with S
 
                 // and no entries should be in the list:
                 entityAs[String] should ===(
-                """{"id":1,"orderItems":[{"item":{"id":1,"name":"eggs","price":100.0},"menu":{"id":1,"name":"daily"},"menuPrice":100.0,"quantity":2},{"item":{"id":2,"name":"steak","price":1000.0},"menu":{"id":1,"name":"daily"},"menuPrice":1000.0,"quantity":1}],"status":"Paid","user":{"age":20,"countryOfResidence":"RF","id":1,"name":"John"}}"""
+                """{"id":1,"orderItems":[{"item":{"id":1,"name":"eggs","price":100.0},"menu":{"id":1,"name":"daily"},"menuPrice":100.0,"quantity":2},{"item":{"id":2,"name":"steak","price":1000.0},"menu":{"id":1,"name":"daily"},"menuPrice":1000.0,"quantity":1}],"status":"Paid","userId":1}"""
                 )
             }
         }
 
         "редактирует заказ (PUT /order)" in {
-            val order = OrderDto(1, User(1, "John", 20, "RF"), "Paid",
-                Seq(OrderItemDto(Menu(1, "daily"), Item(1, "eggs", 100.0), 100.0, 2),
-                    OrderItemDto(Menu(1, "daily"), Item(2, "steak", 1000.0), 1000.0, 1),
+            val order = OrderDto(1, 1, "Paid",
+                Seq(OrderItemDto(Menu(1, "daily"), Item(2, "steak", 1000.0), 1000.0, 1),
                     OrderItemDto(Menu(1, "daily"), Item(3, "tea", 50.0), 50.0, 1)
                 )
             )
@@ -180,7 +179,7 @@ class OrderRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with S
         }
 
         "добавляет второй заказ (POST /orders)" in {
-            val order = OrderDto(2, User(2, "Tom", 21, "RF"), "Paid",
+            val order = OrderDto(2, 2, "Paid",
                 Seq(
                     OrderItemDto(Menu(1, "daily"), Item(3, "tea", 50.0), 50.0, 2)
                 )
@@ -211,7 +210,7 @@ class OrderRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with S
 
                 // and no entries should be in the list:
                 entityAs[String] should ===(
-                    """{"orders":[{"id":1,"orderItems":[{"item":{"id":1,"name":"eggs","price":100.0},"menu":{"id":1,"name":"daily"},"menuPrice":100.0,"quantity":2},{"item":{"id":2,"name":"steak","price":1000.0},"menu":{"id":1,"name":"daily"},"menuPrice":1000.0,"quantity":1},{"item":{"id":3,"name":"tea","price":50.0},"menu":{"id":1,"name":"daily"},"menuPrice":50.0,"quantity":1}],"status":"Ready","user":{"age":20,"countryOfResidence":"RF","id":1,"name":"John"}}]}"""
+                    """{"orders":[{"id":1,"orderItems":[{"item":{"id":2,"name":"steak","price":1000.0},"menu":{"id":1,"name":"daily"},"menuPrice":1000.0,"quantity":1},{"item":{"id":3,"name":"tea","price":50.0},"menu":{"id":1,"name":"daily"},"menuPrice":50.0,"quantity":1}],"status":"Ready","userId":1}]}"""
                 )
             }
         }
@@ -241,7 +240,7 @@ class OrderRoutesSpec extends AnyWordSpec with Matchers with ScalaFutures with S
 
                 // and no entries should be in the list:
                 entityAs[String] should ===(
-                    """{"orders":[{"id":2,"orderItems":[{"item":{"id":3,"name":"tea","price":50.0},"menu":{"id":1,"name":"daily"},"menuPrice":50.0,"quantity":2}],"status":"Paid","user":{"age":21,"countryOfResidence":"RF","id":2,"name":"Tom"}}]}"""
+                    """{"orders":[{"id":2,"orderItems":[{"item":{"id":3,"name":"tea","price":50.0},"menu":{"id":1,"name":"daily"},"menuPrice":50.0,"quantity":2}],"status":"Paid","userId":2}]}"""
                 )
             }
         }
