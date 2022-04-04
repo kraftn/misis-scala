@@ -1,0 +1,72 @@
+###
+GET http://localhost:8080/items
+Content-Type: application/json
+
+###
+GET http://localhost:8080/item/sdfsadf
+Content-Type: application/json
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "id": "sdfsadf",
+  "name": "Цыплёнок Грин",
+  "description": "Сочное куриное филе,сыр моцарелла, сладкий зелёный перец, соус «Чесночный рэнч», чеснок и томаты.",
+  "price": 549.0,
+  "routeCard": [
+    {
+      "name": "Порезать лук",
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "id": "3",
+  "name": "Микс Грин",
+  "description": "Соус «Тысяча островов», шампиньоны, лук, сладкий зелёный перец и пикантная пепперони",
+  "price": 549.0,
+  "routeCard": [
+    {
+      "name": "Порезать лук",
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Чеддер Чизбургер",
+  "description": "Яркий сыр Чеддер, Моцарелла, хрустящий бекон, говядина, маринованные огурчики, томаты, соус 1000 островов.",
+  "price": 599.0,
+  "routeCard": [
+    {
+      "name": "Порезать лук",
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}

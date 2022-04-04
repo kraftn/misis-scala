@@ -24,16 +24,22 @@ trait MenuServiceImpl extends MenuService with MenuRepo with ItemRepo{
     }
 
     override def createMenu(menu: MenuDto): Future[Unit] = {
-        db.run {
-            DBIO.seq (
-                (itemTable ++= menu.items),
-                (menuTable += Menu(menu.id, menu.name)),
-                (menuItemTable ++= menu.items.map(item => MenuItem(
-                    menuId = menu.id,
-                    itemId = item.id,
-                    price = item.price)))
-            ).transactionally
-        }
+        for {
+            existedItems <- db.run(itemTable.filter(_.id inSet menu.items.map(_.id)).map(_.id).result)
+            newItems = menu.items.filterNot(item => existedItems.contains(item.id))
+            existedMenu <- db.run(menuTable.filter(_.id === menu.id).map(_.id).result.headOption)
+
+            addItem = Some(itemTable ++= newItems)
+            addMenu = existedMenu.map(_ => None).getOrElse(Some(menuTable += Menu(menu.id, menu.name)))
+            addMenuItems = Some(menuItemTable ++= menu.items.map(item => MenuItem(
+                menuId = menu.id,
+                itemId = item.id,
+                price = item.price)))
+            actions = Seq(addItem, addMenu, addMenuItems).flatten
+        } yield
+            db.run {
+                DBIO.sequence(actions).transactionally
+            }
     }
 
     override def getMenu(name: String): Future[Option[MenuDto]] = {
