@@ -5,16 +5,13 @@ import com.sksamuel.elastic4s.requests.indexes.IndexResponse
 import com.sksamuel.elastic4s.requests.indexes.admin.IndexExistsResponse
 import com.sksamuel.elastic4s.requests.searches.SearchResponse
 import com.sksamuel.elastic4s.{ElasticClient, HitReader, Indexable, RequestSuccess}
-import play.api.libs.json.{Format, Json}
 import ru.misis.menu.model.{Item, MenuService}
+import com.sksamuel.elastic4s.ElasticDsl._
+import ru.misis.menu.model.ModelJsonFormats._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: ExecutionContext) extends MenuService{
-
-    import com.sksamuel.elastic4s.ElasticDsl._
-
-    implicit val formatItem: Format[Item] = Json.format[Item]
+class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: ExecutionContext) extends MenuService {
 
     val itemIndex = "item"
 
@@ -55,7 +52,7 @@ class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: Executi
 
     override def saveItem(item: Item): Future[Item] =
         elastic.execute{
-            indexInto(itemIndex).id(item.id.get).doc(item)
+            indexInto(itemIndex).id(item.id).doc(item)
         }.map{
             case results: RequestSuccess[IndexResponse] => item
         }
