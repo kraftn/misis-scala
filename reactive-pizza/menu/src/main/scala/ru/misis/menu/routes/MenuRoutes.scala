@@ -9,6 +9,7 @@ import spray.json.DefaultJsonProtocol._
 import ru.misis.menu.model.ModelJsonFormats._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import io.scalaland.chimney.dsl._
+import spray.json._
 
 import java.util.UUID
 
@@ -27,8 +28,8 @@ class MenuRoutes(menuService: MenuService)(implicit val system: ActorSystem[_]){
     path("item") {
         (post & entity(as[ItemDTO])) { itemDTO =>
             val item = itemDTO.into[Item]
-                .withFieldComputed(_.id, _.id.getOrElse(UUID.randomUUID().toString))
                 .transform
+
             onSuccess(menuService.saveItem(item)) { performed =>
                 complete(StatusCodes.Created, performed)
             }
@@ -43,8 +44,8 @@ class MenuRoutes(menuService: MenuService)(implicit val system: ActorSystem[_]){
             }
         }
     } ~
-    path("item" / Segment) { name =>
-        delete {
+    path("find" / Segment) { name =>
+        get {
             onSuccess(menuService.findItem(name)) { items =>
                 complete((StatusCodes.OK, items))
             }
@@ -53,8 +54,8 @@ class MenuRoutes(menuService: MenuService)(implicit val system: ActorSystem[_]){
 }
 
 
-case class ItemDTO(id: Option[String],
-                name: String,
-                description: Option[String],
-                price: Double,
-                routeCard: Seq[Stage])
+case class ItemDTO(name: String,
+                   description: Option[String],
+                   category: String,
+                   price: Double,
+                   routeCard: Seq[Stage])
