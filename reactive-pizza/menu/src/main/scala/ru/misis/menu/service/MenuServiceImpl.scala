@@ -48,7 +48,13 @@ class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: Executi
             case results: RequestSuccess[GetResponse] => results.result.to[Item]
         }
 
-    override def findItem(query: String): Future[Seq[Item]] = ???
+    override def findItem(query: String): Future[Seq[Item]] = {
+        elastic.execute{
+            search(itemIndex).query(query)
+        }.map{
+            case results: RequestSuccess[SearchResponse] => results.result.to[Item]
+        }
+    }
 
     override def saveItem(item: Item): Future[Item] =
         elastic.execute{
