@@ -1,0 +1,11 @@
+###
+GET http://localhost:8080/items
+Content-Type: application/json
+
+###
+GET http://localhost:8080/item/sdfsadf
+Content-Type: application/json
+
+###
+GET http://localhost:8080/find/сладкий зелёный голубой
+Content-Type: application/json

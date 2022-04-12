@@ -1,20 +1,13 @@
-###
-GET http://localhost:8080/items
-Content-Type: application/json
-
-###
-GET http://localhost:8080/item/sdfsadf
-Content-Type: application/json
 
 ###
 POST http://localhost:8080/item
 Content-Type: application/json
 
 {
-  "id": "sdfsadf",
   "name": "Цыплёнок Грин",
   "description": "Сочное куриное филе,сыр моцарелла, сладкий зелёный перец, соус «Чесночный рэнч», чеснок и томаты.",
   "price": 549.0,
+  "category": "Пицца",
   "routeCard": [
     {
       "name": "Порезать лук",
@@ -33,10 +26,10 @@ POST http://localhost:8080/item
 Content-Type: application/json
 
 {
-  "id": "3",
   "name": "Микс Грин",
   "description": "Соус «Тысяча островов», шампиньоны, лук, сладкий зелёный перец и пикантная пепперони",
   "price": 549.0,
+  "category": "Пицца",
   "routeCard": [
     {
       "name": "Порезать лук",
@@ -55,10 +48,10 @@ POST http://localhost:8080/item
 Content-Type: application/json
 
 {
-  "id": "231bdbba-34e9-46b6-9d09-a46260ddb8c1",
   "name": "Чеддер Чизбургер",
   "description": "Яркий сыр Чеддер, Моцарелла, хрустящий бекон, говядина, маринованные огурчики, томаты, соус 1000 островов. И много всякого интересного",
   "price": 599.0,
+  "category": "Пицца",
   "routeCard": [
     {
       "name": "Порезать лук",
@@ -74,12 +67,13 @@ Content-Type: application/json
 
 ###
 POST http://localhost:8080/item
-Content-Type: application/json
+Content-Type: application/json;charset=utf-8
 
 {
   "name": "С грушей и голубым сыром",
   "description": "Нежная пицца со сладкой грушей, ароматным блю чиз, сливочным сыром и хрустящим миндалем.",
   "price": 599.0,
+  "category": "Пицца",
   "routeCard": [
     {
       "name": "Порезать лук",

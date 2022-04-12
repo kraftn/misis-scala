@@ -12,9 +12,9 @@ object ModelJsonFormats {
 
     implicit val productJsonFormat = jsonFormat2(Product)
     implicit val stageJsonFormat = jsonFormat3(Stage)
-    implicit val itemJsonFormat = jsonFormat5(Item)
+    implicit val itemJsonFormat = jsonFormat6(Item)
 
-    implicit val itemHitReader: HitReader[Item] = hit => Try(hit.sourceAsString.toJson.convertTo[Item])
+    implicit val itemHitReader: HitReader[Item] = hit => Try(hit.sourceAsString.parseJson.convertTo[Item])
     implicit val itemIndexable: Indexable[Item] = item => item.toJson.compactPrint
 
 }

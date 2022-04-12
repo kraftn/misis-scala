@@ -16,6 +16,7 @@ case class Category(id: String = UUID.randomUUID().toString,
 
 case class Item(id: String = UUID.randomUUID().toString,
                 name: String,
+                category: String,
                 description: Option[String],
                 price: Double,
                 routeCard: Seq[Stage])
