@@ -14,7 +14,7 @@ object ModelJsonFormats {
     implicit val stageJsonFormat = jsonFormat3(Stage)
     implicit val itemJsonFormat = jsonFormat5(Item)
 
-    implicit val itemHitReader: HitReader[Item] = hit => Try(hit.sourceAsString.parseJson.convertTo[Item])
+    implicit val itemHitReader: HitReader[Item] = hit => Try(hit.sourceAsString.toJson.convertTo[Item])
     implicit val itemIndexable: Indexable[Item] = item => item.toJson.compactPrint
 
 }
