@@ -1,0 +1,192 @@
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Цыплёнок Грин",
+  "description": "Сочное куриное филе,сыр моцарелла, сладкий зелёный перец, соус «Чесночный рэнч», чеснок и томаты.",
+  "price": 549.0,
+  "category": "Пицца",
+  "routeStages": [
+    {
+    "name": "Раскатать тесто в соответствием с размером",
+      "duration": 60,
+      "products": [
+        {"name":  "тесто", "amount":  250},
+        {"name":  "мука", "amount":  15}
+      ]
+    },
+    {
+      "name": "Полить соусом, равномерно распределить",
+      "duration": 10,
+      "products": [
+        {"name":  "Соус «Чесночный рэнч»", "amount":  40}
+      ]
+    },
+    {
+      "name": "Посыпать специями",
+      "duration": 5,
+      "products": [
+        {"name":  "Средиземноморские травы", "amount":  2}
+      ]
+    },
+    {
+      "name": "Потереть сыр",
+      "duration": 30,
+      "products": [
+        {"name":  "сыр моцарелла", "amount":  50}
+      ]
+    },
+    {
+      "name": "Нарезать начинку",
+      "duration": 60,
+      "products": [
+        {"name":  "Куриная грудка", "amount":  60},
+        {"name":  "Чеснок", "amount":  10},
+        {"name":  "Томаты", "amount":  40},
+        {"name":  "Сладкий зеленый перец", "amount":  20}
+      ]
+    },
+    {
+      "name": "Распределить начинку на пицце",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Выпечь пиццу в печи",
+      "duration": 120,
+      "products": []
+    },
+    {
+      "name": "",
+      "duration": 15,
+      "products": [
+        {"name":  "зеленый базелик", "amount":  10}
+      ]
+    },
+    {
+      "name": "Добавить перец",
+      "duration": 10,
+      "products": [
+        {"name":  "Перец халапеньо", "amount":  20}
+      ]
+    },
+    {
+      "name": "Порезать на 6 частей",
+      "duration": 15,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Постный Джонер",
+  "description": "Ролл с грибами, маринованными огурчиками, луком, обжаренным картофелем и фирменным томатным соусом",
+  "price": 219.0,
+  "category": "Закуски",
+  "routeStages": [
+    {
+      "name": "Нарезать продукты",
+      "duration": 60,
+      "products": [
+        {"name": "Грибы","amount": 30},
+        {"name": "Лук","amount": 20},
+        {"name": "Огурчики","amount": 50}
+      ]
+    },
+    {
+      "name": "Распределить начинку на лаваше",
+      "duration": 20,
+      "products": [
+        {"name": "Лаваш","amount": 50},
+        {"name": "Картофель обжаренный во фритюре","amount": 80}
+      ]
+    },
+    {
+      "name": "Полить соусом",
+      "duration": 10,
+      "products": [
+        {"name": "Соус «Чесночный рэнч»","amount": 40}
+      ]
+    },
+    {
+      "name": "Запечь ролл на гриле",
+      "duration": 120,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Микс Грин",
+  "description": "Соус «Тысяча островов», шампиньоны, лук, сладкий зелёный перец и пикантная пепперони",
+  "price": 549.0,
+  "category": "Пицца",
+  "routeStages": [
+    {
+      "name": "Порезать лук",
+      "duration": 10,
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Чеддер Чизбургер",
+  "description": "Яркий сыр Чеддер, Моцарелла, хрустящий бекон, говядина, маринованные огурчики, томаты, соус 1000 островов. И много всякого интересного",
+  "price": 599.0,
+  "category": "Пицца",
+  "routeStages": [
+    {
+      "name": "Порезать лук",
+      "duration": 10,
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json;charset=utf-8
+
+{
+  "name": "С грушей и голубым сыром",
+  "description": "Нежная пицца со сладкой грушей, ароматным блю чиз, сливочным сыром и хрустящим миндалем.",
+  "price": 599.0,
+  "category": "Пицца",
+  "routeStages": [
+    {
+      "name": "Порезать лук",
+      "duration": 10,
+      "products": [
+        {
+          "name": "Лук",
+          "amount": 1.0
+        }
+      ]
+    }
+  ]
+}

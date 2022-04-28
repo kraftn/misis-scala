@@ -1,17 +1,25 @@
 package ru.misis.menu.service
 
+import akka.Done
+import akka.actor.ActorSystem
+import akka.stream.scaladsl.Source
+import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.requests.get.GetResponse
 import com.sksamuel.elastic4s.requests.indexes.IndexResponse
-import com.sksamuel.elastic4s.requests.indexes.admin.IndexExistsResponse
 import com.sksamuel.elastic4s.requests.searches.SearchResponse
-import com.sksamuel.elastic4s.{ElasticClient, HitReader, Indexable, RequestSuccess}
-import ru.misis.menu.model.{Item, MenuService}
-import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.{ElasticClient, RequestSuccess}
+import ru.misis.menu.model.MenuCommands
 import ru.misis.menu.model.ModelJsonFormats._
+import ru.misis.menu.model.Objects._
+import ru.misis.util.WithKafka
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: ExecutionContext) extends MenuService {
+class MenuCommandImpl(elastic: ElasticClient)
+                     (implicit executionContext: ExecutionContext,
+                      val system: ActorSystem)
+    extends MenuCommands
+    with WithKafka {
 
     val itemIndex = "item"
 
@@ -28,9 +36,10 @@ class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: Executi
                         nestedField("routeCard").properties(
                             textField("name"),
                             textField("description"),
+                            intField("duration"),
                             nestedField("products").properties(
                                 textField("name"),
-                                doubleField("amount")
+                                intField("amount")
                             )
                         )
                     )
@@ -71,4 +80,17 @@ class MenuServiceImpl(elastic: ElasticClient)(implicit executionContext: Executi
             .map{
                 case results: RequestSuccess[IndexResponse] => item
             }
+
+    override def publish(itemIds: Seq[String]): Future[Done] = {
+        for {
+            items <- Future.sequence(itemIds.map { itemId =>
+                elastic.execute(get(itemIndex, itemId))
+                    .map {
+                        case results: RequestSuccess[GetResponse] => results.result.to[Item]
+                    }
+            })
+            result <- Source.single(ItemsEvent(items))
+                .runWith(kafkaSink[ItemsEvent])
+        } yield result
+    }
 }

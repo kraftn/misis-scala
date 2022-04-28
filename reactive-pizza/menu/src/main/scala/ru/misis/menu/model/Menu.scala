@@ -1,29 +1,33 @@
 package ru.misis.menu.model
 
+import akka.Done
+import ru.misis.event.Event
+import ru.misis.event.Menu._
+import ru.misis.menu.model.Objects._
+
 import java.util.UUID
 import scala.concurrent.Future
 
-trait MenuService {
+trait MenuCommands {
     def listItems(): Future[Seq[Item]]
+
     def getItem(id: String): Future[Item]
-    def findItem(query:String): Future[Seq[Item]]
+
+    def findItem(query: String): Future[Seq[Item]]
+
     def saveItem(item: Item): Future[Item]
+
+    def publish(itemIds: Seq[String]): Future[Done]
 }
 
-case class Category(id: String = UUID.randomUUID().toString,
+object Objects {
+
+    case class Item(id: ItemId = UUID.randomUUID().toString,
                     name: String,
-                    itemIds: Seq[String])
+                    category: String,
+                    description: Option[String],
+                    price: Double,
+                    routeStages: Seq[RouteStage])
 
-case class Item(id: String = UUID.randomUUID().toString,
-                name: String,
-                category: String,
-                description: Option[String],
-                price: Double,
-                routeCard: Seq[Stage])
-
-case class Stage(name: String,
-                 description: Option[String],
-                 products: Seq[Product])
-
-case class Product(name: String, amount: Double)
-
+    case class ItemsEvent(items: Seq[Item]) extends Event
+}
