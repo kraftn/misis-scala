@@ -1,0 +1,17 @@
+###
+GET http://localhost:8080/items
+Content-Type: application/json
+
+###
+GET http://localhost:8080/item/sdfsadf
+Content-Type: application/json
+
+###
+GET http://localhost:8080/find/сладкий зелёный голубой
+Content-Type: application/json
+
+###
+POST http://localhost:8080/publish
+Content-Type: application/json
+
+["7c89c3cb-8f6d-4b7d-925a-f9263991cd20", "b1a4a4c2-feb6-485f-b8de-9508a0aabb47", "89f92b62-1a84-4a63-913d-42cfac01faf4", "052fe095-39a2-4dc7-b075-5ad2d8c8276f", "5c0aee9e-c789-42ce-9d5b-38fedb85ea71"]
