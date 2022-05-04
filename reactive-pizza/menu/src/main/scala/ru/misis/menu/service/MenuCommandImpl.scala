@@ -2,12 +2,13 @@ package ru.misis.menu.service
 
 import akka.Done
 import akka.actor.ActorSystem
-import akka.stream.scaladsl.Source
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.requests.get.GetResponse
 import com.sksamuel.elastic4s.requests.indexes.IndexResponse
 import com.sksamuel.elastic4s.requests.searches.SearchResponse
 import com.sksamuel.elastic4s.{ElasticClient, RequestSuccess}
+import io.scalaland.chimney.dsl.TransformerOps
+import ru.misis.event.Menu.{Menu, MenuCategory, MenuItem, RouteItem}
 import ru.misis.menu.model.MenuCommands
 import ru.misis.menu.model.ModelJsonFormats._
 import ru.misis.menu.model.Objects._
@@ -89,8 +90,21 @@ class MenuCommandImpl(elastic: ElasticClient)
                         case results: RequestSuccess[GetResponse] => results.result.to[Item]
                     }
             })
-            result <- Source.single(ItemsEvent(items))
-                .runWith(kafkaSink[ItemsEvent])
+            result <- publishEvent(ItemsEvent(items))
         } yield result
+    }
+
+    override def createMenu(items: Seq[Item]): Menu = {
+        val categories = items
+            .groupBy(_.category)
+            .map { case (name, items) =>
+                MenuCategory(name, items.map(item => item.into[MenuItem].transform))
+            }
+            .toSeq
+        Menu(categories)
+    }
+
+    override def createRouteMap(items: Seq[Item]): Seq[RouteItem] = {
+        items.map(item => RouteItem(item.id, item.routeStages))
     }
 }
