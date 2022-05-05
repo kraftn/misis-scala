@@ -18,6 +18,10 @@ trait MenuCommands {
     def saveItem(item: Item): Future[Item]
 
     def publish(itemIds: Seq[String]): Future[Done]
+
+    def createMenu(items: Seq[Item]): Menu
+
+    def createRouteMap(items: Seq[Item]): Seq[RouteItem]
 }
 
 object Objects {
