@@ -1,0 +1,9 @@
+###
+GET localhost:8083/orders
+Content-Type: application/json
+
+###
+PUT localhost:8083/take
+Content-Type: application/json
+
+"1"

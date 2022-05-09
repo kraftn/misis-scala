@@ -1,0 +1,11 @@
+###
+GET localhost:9200/cart
+
+###
+GET localhost:9200/menu
+
+###
+GET localhost:9200/cart/_search
+
+###
+GET localhost:9200/menu/_search

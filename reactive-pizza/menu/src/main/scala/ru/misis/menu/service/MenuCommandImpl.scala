@@ -34,7 +34,7 @@ class MenuCommandImpl(elastic: ElasticClient)
                         textField("category"),
                         textField("description").analyzer("russian"),
                         doubleField("price"),
-                        nestedField("routeCard").properties(
+                        nestedField("routeStages").properties(
                             textField("name"),
                             textField("description"),
                             intField("duration"),

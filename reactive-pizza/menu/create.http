@@ -133,14 +133,63 @@ Content-Type: application/json
   "category": "Пицца",
   "routeStages": [
     {
-      "name": "Порезать лук",
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name": "Тесто","amount": 250},
+        {"name": "Мука","amount":  15}
+      ]
+    },
+    {
+      "name": "Полить соусом",
       "duration": 10,
       "products": [
-        {
-          "name": "Лук",
-          "amount": 1.0
-        }
+        {"name": "Соус «Тысяча островов»","amount": 40}
       ]
+    },
+    {
+      "name": "Нарезать начинку",
+      "duration": 60,
+      "products": [
+        {"name": "Шампиньоны","amount": 50},
+        {"name": "Пепперони","amount": 50},
+        {"name": "Лук","amount": 10},
+        {"name": "Зелёный перец","amount": 30}
+      ]
+    },
+    {
+      "name": "Обжарить грибы",
+      "duration": 60,
+      "products": [
+        {"name": "Растительное масло","amount": 10}
+      ]
+    },
+    {
+      "name": "Потереть сыр",
+      "duration": 30,
+      "products": [
+        {"name": "Сыр Моцарелла","amount": 50}
+      ]
+    },
+    {
+      "name": "Равномерно распределить начинку",
+      "duration": 20,
+      "products": []
+    },
+    {
+      "name": "Посыпать сыром",
+      "duration": 10,
+      "products": []
+    },
+    {
+      "name": "Выпечь пиццу в печи",
+      "duration": 120,
+      "products": []
+    },
+    {
+      "name": "Порезать на 6 частей",
+      "duration": 15,
+      "products": []
     }
   ]
 }
@@ -156,14 +205,65 @@ Content-Type: application/json
   "category": "Пицца",
   "routeStages": [
     {
-      "name": "Порезать лук",
+      "name": "Отварить говядину",
+      "duration": 120,
+      "products": [
+        {"name": "Говядина", "amount": 50}
+      ]
+    },
+    {
+      "name": "Нарезать начинку",
+      "duration": 60,
+      "products": [
+        {"name": "Говядина", "amount": 50},
+        {"name": "Маринованные огурцы", "amount": 75},
+        {"name": "Томаты", "amount": 75}
+      ]
+    },
+    {
+      "name": "Натереть сыр",
+      "duration": 30,
+      "products": [
+        {"name": "Сыр Чеддер", "amount": 25},
+        {"name": "Сыр Моцарелла", "amount": 25}
+      ]
+    },
+    {
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name": "Тесто", "amount": 200},
+        {"name": "Мука", "amount": 15}
+      ]
+    },
+    {
+      "name": "Смазать тесто соусом",
       "duration": 10,
       "products": [
-        {
-          "name": "Лук",
-          "amount": 1.0
-        }
+        {"name": "Соус «Тысяча островов»", "amount": 40}
       ]
+    },
+    {
+      "name": "Распределить начинку на пицце",
+      "duration": 30,
+      "products": [
+        {"name": "Бекон", "amount": 50}
+      ]
+    },
+    {
+      "name": "Посыпать сыром",
+      "duration": 10,
+      "products": []
+    },
+    {
+      "name": "Выпечь пиццу в печи",
+      "duration": 120,
+      "products": []
+    },
+    {
+      "name": "Порезать на 6 частей",
+      "duration": 15,
+      "products": []
     }
   ]
 }
@@ -179,14 +279,598 @@ Content-Type: application/json;charset=utf-8
   "category": "Пицца",
   "routeStages": [
     {
-      "name": "Порезать лук",
+      "name": "Очистить груши от кожицы и семян",
+      "duration": 60,
+      "products": [
+        {"name": "Груша", "amount": 100}
+      ]
+    },
+    {
+      "name": "Нарезать ингредиенты",
+      "duration": 60,
+      "products": [
+        {"name": "Груша", "amount": 100},
+        {"name": "Голубой сыр", "amount": 50}
+      ]
+    },
+    {
+      "name": "Порубить лепестки миндаля ножом",
+      "duration": 30,
+      "products": [
+        {"name": "Миндаль", "amount": 20}
+      ]
+    },
+    {
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name": "Тесто", "amount": 200},
+        {"name": "Мука", "amount": 15}
+      ]
+    },
+    {
+      "name": "Смазать тесто сливочным сыром",
       "duration": 10,
       "products": [
-        {
-          "name": "Лук",
-          "amount": 1.0
-        }
+        {"name": "Сливочный сыр", "amount": 50}
       ]
+    },
+    {
+      "name": "Распределить начинку на пицце",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Выпечь пиццу в печи",
+      "duration": 60,
+      "products": []
+    },
+    {
+      "name": "Порезать на 6 частей",
+      "duration": 15,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Маргарита",
+  "description": "Традиционный рецепт пиццы с Моцареллой, сочными томатами, фирменным томатным соусом и орегано",
+  "price": 399,
+  "category": "Пицца",
+  "routeStages": [
+    {
+      "name": "Приготовить томатный соус",
+      "duration": 60,
+      "products": [
+        {"name":  "Помидоры", "amount": 90},
+        {"name":  "Чеснок", "amount": 10}
+      ]
+    },
+    {
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name":  "Тесто", "amount":  250},
+        {"name":  "Мука", "amount":  15}
+      ]
+    },
+    {
+      "name": "Полить тесто соусом",
+      "duration": 10,
+      "products": []
+    },
+    {
+      "name": "Потереть сыр",
+      "duration": 30,
+      "products": [
+        {"name":  "Сыр Моцарелла", "amount": 200}
+      ]
+    },
+    {
+      "name": "Нарезать начинку",
+      "duration": 30,
+      "products": [
+        {"name":  "Помидоры", "amount": 140}
+      ]
+    },
+    {
+      "name": "Распределить начинку на пицце",
+      "duration": 30,
+      "products": [
+        {"name": "Орегано", "amount": 20}
+      ]
+    },
+    {
+      "name": "Выпечь пиццу в печи",
+      "duration": 120,
+      "products": []
+    },
+    {
+      "name": "Порезать на 6 частей",
+      "duration": 15,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Чикен Джонер",
+  "description": "Ролл с Моцареллой, сочным куриным филе, томатами, шампиньонами и соусом «Чесночный рэнч»",
+  "price": 219,
+  "category": "Закуски",
+  "routeStages": [
+    {
+      "name": "Нарезать продукты",
+      "duration": 60,
+      "products": [
+        {"name": "Моцарелла","amount": 30},
+        {"name": "Томаты","amount": 50},
+        {"name": "Шампиньоны","amount": 50}
+      ]
+    },
+    {
+      "name": "Распределить начинку на лаваше",
+      "duration": 20,
+      "products": [
+        {"name": "Лаваш","amount": 50},
+        {"name": "Обжаренное куриное филе","amount": 80}
+      ]
+    },
+    {
+      "name": "Полить соусом",
+      "duration": 10,
+      "products": [
+        {"name": "Соус «Чесночный рэнч»","amount": 40}
+      ]
+    },
+    {
+      "name": "Запечь ролл на гриле",
+      "duration": 120,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Картофельные дольки",
+  "description": "Запеченные дольки картофеля в мундире со специями",
+  "price": 189,
+  "category": "Закуски",
+  "routeStages": [
+    {
+      "name": "Почистить и нарезать картофель",
+      "duration": 60,
+      "products": [
+        {"name": "Картофель", "amount": 150}
+      ]
+    },
+    {
+      "name": "Залить картофель кипятком и варить",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Слить воду",
+      "duration": 10,
+      "products": []
+    },
+    {
+      "name": "Перемешать картофель со специями",
+      "duration": 30,
+      "products": [
+        {"name": "Куркума", "amount": 20},
+        {"name": "Паприка", "amount": 20},
+        {"name": "Чеснок", "amount": 10}
+      ]
+    },
+    {
+      "name": "Выпечь картофель в духовке",
+      "duration": 60,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Сырные палочки",
+  "description": "Любимая закуска с Моцареллой и соусом «Особый чесночный»",
+  "price": 359,
+  "category": "Закуски",
+  "routeStages": [
+    {
+      "name": "Разогреть растительное масло",
+      "duration": 20,
+      "products": [
+        {"name": "Растительное масло", "amount": 200}
+      ]
+    },
+    {
+      "name": "Нарезать сыр на полоски",
+      "duration": 60,
+      "products": [
+        {"name": "Сыр Моцарелла", "amount": 200}
+      ]
+    },
+    {
+      "name": "Обвалять сыр в муке, яйце и сухарях",
+      "duration": 30,
+      "products": [
+        {"name": "Мука", "amount": 70},
+        {"name": "Яйцо", "amount": 75},
+        {"name": "Панировочные сухари", "amount": 60}
+      ]
+    },
+    {
+      "name": "Обжарить полоски сыра в масле",
+      "duration": 30,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Рогалики с колбасками",
+  "description": "Рогалики из нежного теста, с чесночным соусом, альпийскими колбасками и сырами: Пармезан и Фонтина.",
+  "price": 259,
+  "category": "Закуски",
+  "routeStages": [
+    {
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name": "Тесто", "amount": 250}
+      ]
+    },
+    {
+      "name": "Нарезать тесто на треугольники",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Нарезать начинку",
+      "duration": 40,
+      "products": [
+        {"name": "Альпийские колбаски", "amount": 60},
+        {"name": "Сыр Пармезан", "amount": 35},
+        {"name": "Сыр Фонтина", "amount": 35}
+      ]
+    },
+    {
+      "name": "Смазать тесто соусом",
+      "duration": 20,
+      "products": [
+        {"name": "Чесночный соус", "amount": 20}
+      ]
+    },
+    {
+      "name": "Распределить начинку на тесте",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Свернуть рогалики",
+      "duration": 20,
+      "products": []
+    },
+    {
+      "name": "Выпечь рогалики в печи",
+      "duration": 45,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Сырники",
+  "description": "Нежные сырники из печи",
+  "price": 169,
+  "category": "Десерты",
+  "routeStages": [
+    {
+      "name": "Протереть творог через сито",
+      "duration": 15,
+      "products": [
+        {"name": "Творог", "amount": 200}
+      ]
+    },
+    {
+      "name": "Добавить сахар и соль",
+      "duration": 5,
+      "products": [
+        {"name": "Сахар", "amount": 50},
+        {"name": "Соль", "amount": 5}
+      ]
+    },
+    {
+      "name": "Добавить в творожную массу взбитое яйцо и перемешать",
+      "duration": 30,
+      "products": [
+        {"name": "Яйцо", "amount": 70}
+      ]
+    },
+    {
+      "name": "Добавить в творожную массу муку",
+      "duration": 20,
+      "products": [
+        {"name": "Мука", "amount": 60}
+      ]
+    },
+    {
+      "name": "Сформировать из творожной массы кружочки",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Обжарить сырники",
+      "duration": 60,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Рогалики с клубникой",
+  "description": "Сладкие рогалики с клубникой, сыром «кремчиз» и сахарной пудрой",
+  "price": 199,
+  "category": "Десерты",
+  "routeStages": [
+    {
+      "name": "Смешать сыр с сахарной пудрой",
+      "duration": 30,
+      "products": [
+        {"name": "Сыр «кремчиз»", "amount": 50},
+        {"name": "Сахарная пудра", "amount": 17}
+      ]
+    },
+    {
+      "name": "Нарезать клубнику",
+      "duration": 15,
+      "products": [
+        {"name": "Клубника", "amount": 50}
+      ]
+    },
+    {
+      "name": "Раскатать тесто",
+      "duration": 60,
+      "products": [
+        {"name": "Тесто", "amount": 125}
+      ]
+    },
+    {
+      "name": "Нарезать тесто на треугольники",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Распределить начинку на тесте",
+      "duration": 30,
+      "products": []
+    },
+    {
+      "name": "Свернуть рогалики",
+      "duration": 15,
+      "products": []
+    },
+    {
+      "name": "Выпечь рогалики в печи",
+      "duration": 45,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Шоколадный фондан",
+  "description": "Нежный шоколадный бисквит с жидким центром",
+  "price": 179,
+  "category": "Десерты",
+  "routeStages": [
+    {
+      "name": "Растопить шоколад и сливочное масло",
+      "duration": 30,
+      "products": [
+        {"name": "Шоколад", "amount": 40},
+        {"name": "Сливочное масло", "amount": 25}
+      ]
+    },
+    {
+      "name": "Взбить яйцо с схахаром",
+      "duration": 20,
+      "products": [
+        {"name": "Яйцо", "amount": 70},
+        {"name": "Сахар", "amount": 15}
+      ]
+    },
+    {
+      "name": "Вылить взбитое яйцо в растопленный шоколад",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "Добавить просеянную муку",
+      "duration": 10,
+      "products": [
+        {"name": "Мука", "amount": 15}
+      ]
+    },
+    {
+      "name": "Наполнить формы тестом",
+      "duration": 20,
+      "products": []
+    },
+    {
+      "name": "Выпечь в духовке",
+      "duration": 60,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Куки шоколадное",
+  "description": "Сдобное шоколадное печенье с кусочками настоящего бельгийского шоколада и шоколадной начинкой",
+  "price": 89,
+  "category": "Десерты",
+  "routeStages": [
+    {
+      "name": "Измельчить шоколад на кусочки",
+      "duration": 20,
+      "products": [
+        {"name": "Шоколад", "amount": 75}
+      ]
+    },
+    {
+      "name": "Смешать миксером яйца и ванильный сахар",
+      "duration": 20,
+      "products": [
+        {"name": "Яйцо", "amount": 70},
+        {"name": "Ванильный сахар", "amount": 15}
+      ]
+    },
+    {
+      "name": "Растопить шоколад с маслом",
+      "duration": 30,
+      "products": [
+        {"name": "Шоколад", "amount": 120},
+        {"name": "Сливочное масло", "amount": 50}
+      ]
+    },
+    {
+      "name": "Добавить расплавленный шоколад в сахарно-яичную смесь",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "В отдельной миске смешать вместе муку, разрыхлитель и соль",
+      "duration": 15,
+      "products": [
+        {"name": "Мука", "amount": 50},
+        {"name": "Разрыхлитель", "amount": 5},
+        {"name": "Соль", "amount": 5}
+      ]
+    },
+    {
+      "name": "Смешать",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "Положить в тесто кусочки шоколада",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "Сформировать печенья",
+      "duration": 20,
+      "products": []
+    },
+    {
+      "name": "Выпечь в духовке",
+      "duration": 60,
+      "products": []
+    }
+  ]
+}
+
+###
+POST http://localhost:8080/item
+Content-Type: application/json
+
+{
+  "name": "Чизкейк «Нью-Йорк»",
+  "description": "Классический чизкейк из сливочного сыра, с добавлением натуральной ванили.",
+  "price": 219,
+  "category": "Десерты",
+  "routeStages": [
+    {
+      "name": "Измельчить печенье в крошку",
+      "duration": 20,
+      "products": [
+        {"name": "Печенье", "amount": 80}
+      ]
+    },
+    {
+      "name": "К измельченному печенью добавить сахар, растопленное сливочное масло и соль",
+      "duration": 20,
+      "products": [
+        {"name": "Сахар", "amount": 20},
+        {"name": "Сливочное масло", "amount": 25},
+        {"name": "Соль", "amount": 3}
+      ]
+    },
+    {
+      "name": "Выложить полученную массу в форму",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "Выпекать основу чизкейка в духовке",
+      "duration": 60,
+      "products": []
+    },
+    {
+      "name": "Смешать сливочный сыр с сахаром",
+      "duration": 10,
+      "products": [
+        {"name": "Сливочный сыр", "amount": 100},
+        {"name": "Сахар", "amount": 20}
+      ]
+    },
+    {
+      "name": "В отдельной посуде взбить миксером сливки с лимонным соком",
+      "duration": 10,
+      "products": [
+        {"name": "Сливки", "amount": 35},
+        {"name": "Лимонный сок", "amount": 5},
+        {"name": "Ваниль", "amount": 5}
+      ]
+    },
+    {
+      "name": "Осторожно ввести сливки в сырную массу",
+      "duration": 5,
+      "products": []
+    },
+    {
+      "name": "Выложить начинку в форму и охладить",
+      "duration": 60,
+      "products": []
     }
   ]
 }

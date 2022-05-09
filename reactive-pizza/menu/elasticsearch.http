@@ -2,6 +2,9 @@
 GET localhost:9200/item
 
 ###
+GET localhost:9200/item/_search?size=20
+
+###
 GET localhost:9200/item/_search
 Content-Type: application/json
 
