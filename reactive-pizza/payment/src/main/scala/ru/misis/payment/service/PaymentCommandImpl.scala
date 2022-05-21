@@ -14,10 +14,9 @@ class PaymentCommandImpl(implicit executionContext: ExecutionContext,
     extends PaymentCommands
     with WithKafka {
 
-    override def makePayment(order: Order): Future[Cheque] = Future {
+    override def makePayment(order: Order): Future[Cheque] = {
         val worth = order.items.map(item => item.price * item.amount).sum
         val cheque = Cheque(order.cartId, isSuccessful = true, worth)
-        publishEvent(PaymentMade(cheque))
-        cheque
+        publishEvent(PaymentMade(cheque)).map(_ => cheque)
     }
 }

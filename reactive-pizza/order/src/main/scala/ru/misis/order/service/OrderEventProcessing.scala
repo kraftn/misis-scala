@@ -22,7 +22,7 @@ class OrderEventProcessing(orderService: OrderCommands)
     private val logger = LoggerFactory.getLogger(this.getClass)
 
     kafkaSource[OrderFormed]
-        .wireTap { orderFormed =>
+        .map { orderFormed =>
             logger.info(s"Order formed ${orderFormed.toJson.prettyPrint}")
             orderService.saveOrder(orderFormed.order)
         }

@@ -2,7 +2,7 @@ package ru.misis.cart.service
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest}
+import akka.http.scaladsl.model.{ContentTypes, HttpEntity, HttpMethods, HttpRequest, HttpResponse}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.requests.delete.{DeleteByQueryResponse, DeleteResponse}
@@ -119,15 +119,13 @@ class CartCommandImpl(elastic: ElasticClient)(implicit executionContext: Executi
             deleteById(cartIndex, cartId)
         }
 
-    override def payForOrder(order: Order): Future[Cheque] = {
+    override def payForOrder(order: Order): Future[HttpResponse] = {
         val request = HttpRequest(
             method = HttpMethods.POST,
             uri = sys.env("PAYMENT_ENDPOINT"),
             entity = HttpEntity(ContentTypes.`application/json`, order.toJson.compactPrint)
         )
-        Http().singleRequest(request).flatMap(response =>
-            Unmarshal(response).to[Cheque]
-        )
+        Http().singleRequest(request)
     }
 
     override def createOrder(cartId: CartId, status: OrderStatus): Future[Order] =

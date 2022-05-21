@@ -6,7 +6,8 @@ import com.sksamuel.elastic4s.ElasticDsl._
 import com.sksamuel.elastic4s.requests.get.GetResponse
 import com.sksamuel.elastic4s.requests.indexes.IndexResponse
 import com.sksamuel.elastic4s.requests.searches.SearchResponse
-import com.sksamuel.elastic4s.{ElasticClient, RequestSuccess}
+import com.sksamuel.elastic4s.requests.update.UpdateResponse
+import com.sksamuel.elastic4s.{ElasticClient, RequestSuccess, Response}
 import ru.misis.event.Cart.{CartId, Order}
 import ru.misis.event.Order.{KitchenItem, OrderTaken}
 import ru.misis.order.model.OrderCommands
@@ -55,15 +56,12 @@ class OrderCommandImpl(elastic: ElasticClient)(implicit executionContext: Execut
                 case results: RequestSuccess[SearchResponse] => results.result.to[Order]
             }
 
-    override def takeOrder(cartId: CartId): Future[Seq[Done]] =
+    override def takeOrder(cartId: CartId): Future[Response[UpdateResponse]] =
         elastic.execute {
             get(orderIndex, cartId)
         }.flatMap {
             case results: RequestSuccess[GetResponse] =>
                 val order = results.result.to[Order]
-                elastic.execute {
-                    updateById(orderIndex, order.cartId).doc(order.copy(status = TakenOrder))
-                }
 
                 val orderItems = order.items.flatMap(orderItem => (1 to orderItem.amount).map(_ => orderItem))
                 val kitchenItems = orderItems.map { orderItem =>
@@ -74,6 +72,10 @@ class OrderCommandImpl(elastic: ElasticClient)(implicit executionContext: Execut
                     )
                 }
 
-                Future.sequence(kitchenItems.map(item => publishEvent(OrderTaken(item))))
+                Future.sequence(kitchenItems.map(item => publishEvent(OrderTaken(item)))).flatMap { _ =>
+                    elastic.execute {
+                        updateById(orderIndex, order.cartId).doc(order.copy(status = TakenOrder))
+                    }
+                }
         }
 }

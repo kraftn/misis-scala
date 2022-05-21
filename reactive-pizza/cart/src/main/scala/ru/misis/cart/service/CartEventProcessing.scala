@@ -24,7 +24,7 @@ class CartEventProcessing(cartService: CartCommands)
     private val logger = LoggerFactory.getLogger(this.getClass)
 
     kafkaSource[MenuCreated]
-        .wireTap { menuCreated =>
+        .map { menuCreated =>
             logger.info(s"Menu created ${menuCreated.toJson.prettyPrint}")
             cartService.replaceMenu(menuCreated.menu)
         }
@@ -33,14 +33,11 @@ class CartEventProcessing(cartService: CartCommands)
     kafkaSource[PaymentMade]
         .wireTap(paymentMade => logger.info(s"Payment made ${paymentMade.toJson.prettyPrint}"))
         .filter(paymentMade => paymentMade.cheque.isSuccessful)
-        .wireTap { paymentMade =>
-            paymentMade match {
-                case PaymentMade(Cheque(cartId, _, _)) =>
-                    cartService.createOrder(cartId, PaidOrder).map { order =>
-                        publishEvent(OrderFormed(order))
-                        cartService.deleteCart(cartId)
-                    }
-            }
+        .mapAsync(1) { case PaymentMade(Cheque(cartId, _, _)) =>
+            for {
+                order <- cartService.createOrder(cartId, PaidOrder)
+                _ <- cartService.deleteCart(cartId)
+            } yield OrderFormed(order)
         }
-        .runWith(Sink.ignore)
+        .runWith(kafkaSink)
 }

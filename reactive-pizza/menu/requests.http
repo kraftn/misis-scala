@@ -14,4 +14,4 @@ Content-Type: application/json
 POST http://localhost:8080/publish
 Content-Type: application/json
 
-["5c3fff5b-d2b1-4417-99e9-8bed804bf669", "f4217f1e-3feb-4320-b405-29783cc39697", "e88f60ae-1435-466d-8278-5ff8899dd90e", "437e4e01-7229-4630-900e-758171b9efe1", "a9682c66-ef7a-46f6-b896-59befde5d2c0", "e2f85706-1e2a-4084-8d47-95c8946a6263"]
+["57702cb5-6844-4224-8694-b0367405e18b", "3fac67f4-d41c-4fef-bda7-d1a1ddc9befd", "8b15ba86-832a-4038-a963-f1f0670f309c"]
