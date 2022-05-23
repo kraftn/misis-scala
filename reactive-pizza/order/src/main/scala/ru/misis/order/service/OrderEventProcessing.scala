@@ -4,7 +4,7 @@ import akka.actor.ActorSystem
 import akka.stream.scaladsl.{Flow, Sink}
 import org.slf4j.LoggerFactory
 import ru.misis.event.Cart.OrderFormed
-import ru.misis.event.Order.OrderTaken
+import ru.misis.event.Kitchen.ItemCooked
 import ru.misis.order.model.OrderCommands
 import ru.misis.util.{StreamHelper, WithKafka}
 import spray.json._
@@ -22,13 +22,16 @@ class OrderEventProcessing(orderService: OrderCommands)
     private val logger = LoggerFactory.getLogger(this.getClass)
 
     kafkaSource[OrderFormed]
-        .map { orderFormed =>
+        .mapAsync(1) { orderFormed =>
             logger.info(s"Order formed ${orderFormed.toJson.prettyPrint}")
             orderService.saveOrder(orderFormed.order)
         }
         .runWith(Sink.ignore)
 
-    kafkaSource[OrderTaken]
-        .wireTap(orderTaken => logger.info(s"Order taken ${orderTaken.toJson.prettyPrint}"))
+    kafkaSource[ItemCooked]
+        .mapAsync(1) { itemCooked =>
+            logger.info(s"Item cooked ${itemCooked.toJson.compactPrint}")
+            orderService.pushToQueue(itemCooked.kitchenItem)
+        }
         .runWith(Sink.ignore)
 }

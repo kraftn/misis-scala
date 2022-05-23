@@ -1,6 +1,6 @@
 package ru.misis.event
 
-import ru.misis.event.Cart.CartId
+import ru.misis.event.Cart.{CartId, Order}
 import ru.misis.event.Menu.ItemId
 
 import java.util.UUID
@@ -12,4 +12,6 @@ object Order {
                            currentRouteStageNumber: Int)
 
     case class OrderTaken(item: KitchenItem) extends Event
+
+    case class OrderCompleted(order: Order) extends Event
 }

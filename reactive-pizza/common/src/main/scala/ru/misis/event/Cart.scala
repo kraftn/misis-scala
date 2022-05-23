@@ -24,9 +24,9 @@ object OrderStatuses {
     case object TakenOrder extends OrderStatus("Принят")
     case object CookedOrder extends OrderStatus("Приготовлен")
     case object FormedOrder extends OrderStatus("Сформирован")
-    case object FinishedOrder extends OrderStatus("Завершён")
+    case object CompletedOrder extends OrderStatus("Завершён")
 
-    val orderStatuses = List(NotPaidOrder, PaidOrder, TakenOrder, CookedOrder, FormedOrder, FinishedOrder)
+    val orderStatuses = List(NotPaidOrder, PaidOrder, TakenOrder, CookedOrder, FormedOrder, CompletedOrder)
 
     object OrderStatus {
         def fromString(status: String): Option[OrderStatus] = orderStatuses.find(_.status == status)

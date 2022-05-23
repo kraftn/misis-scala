@@ -1,20 +1,21 @@
 package ru.misis.order.service
 
-import akka.Done
 import akka.actor.ActorSystem
 import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.requests.delete.DeleteByQueryResponse
 import com.sksamuel.elastic4s.requests.get.GetResponse
 import com.sksamuel.elastic4s.requests.indexes.IndexResponse
 import com.sksamuel.elastic4s.requests.searches.SearchResponse
+import com.sksamuel.elastic4s.requests.task.CreateTaskResponse
 import com.sksamuel.elastic4s.requests.update.UpdateResponse
 import com.sksamuel.elastic4s.{ElasticClient, RequestSuccess, Response}
 import ru.misis.event.Cart.{CartId, Order}
-import ru.misis.event.Order.{KitchenItem, OrderTaken}
-import ru.misis.order.model.OrderCommands
-import ru.misis.util.WithKafka
-import ru.misis.order.model.ModelJsonFormats._
+import ru.misis.event.Order.{KitchenItem, OrderCompleted, OrderTaken}
 import ru.misis.event.EventJsonFormats._
-import ru.misis.event.OrderStatuses.TakenOrder
+import ru.misis.event.OrderStatuses.{CompletedOrder, CookedOrder, FormedOrder, OrderStatus, TakenOrder}
+import ru.misis.util.WithKafka
+import ru.misis.order.model.OrderCommands
+import ru.misis.order.model.ModelJsonFormats._
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -24,6 +25,7 @@ class OrderCommandImpl(elastic: ElasticClient)(implicit executionContext: Execut
     with WithKafka {
 
     val orderIndex = "order"
+    val itemsQueueIndex = "items-queue"
 
     elastic.execute { deleteIndex(orderIndex) }
         .flatMap { _ =>
@@ -38,6 +40,20 @@ class OrderCommandImpl(elastic: ElasticClient)(implicit executionContext: Execut
                             intField("amount")
                         ),
                         keywordField("status")
+                    )
+                )
+            }
+        }
+
+    elastic.execute { deleteIndex(itemsQueueIndex) }
+        .flatMap { _ =>
+            elastic.execute {
+                createIndex(itemsQueueIndex).mapping(
+                    properties(
+                        keywordField("id"),
+                        keywordField("cartId"),
+                        keywordField("menuItemId"),
+                        intField("currentRouteStageNumber")
                     )
                 )
             }
@@ -73,9 +89,67 @@ class OrderCommandImpl(elastic: ElasticClient)(implicit executionContext: Execut
                 }
 
                 Future.sequence(kitchenItems.map(item => publishEvent(OrderTaken(item)))).flatMap { _ =>
-                    elastic.execute {
-                        updateById(orderIndex, order.cartId).doc(order.copy(status = TakenOrder))
-                    }
+                    changeStatus(cartId, TakenOrder)
                 }
+        }
+
+    override def formOrder(cartId: CartId): Future[Response[UpdateResponse]] = {
+        elastic.execute {
+            deleteByQuery(itemsQueueIndex, termQuery("cartId", cartId))
+        }.flatMap {
+            case _: RequestSuccess[Either[DeleteByQueryResponse, CreateTaskResponse]] =>
+                changeStatus(cartId, FormedOrder)
+        }
+    }
+
+    override def completeOrder(cartId: CartId): Future[Response[UpdateResponse]] =
+        elastic.execute {
+            get(orderIndex, cartId)
+        }.flatMap {
+            case results: RequestSuccess[GetResponse] =>
+                val order = results.result.to[Order]
+                publishEvent(OrderCompleted(order)).flatMap { _ =>
+                    changeStatus(cartId, CompletedOrder)
+                }
+        }
+
+    override def getStatus(cartId: CartId): Future[OrderStatus] =
+        elastic.execute {
+            get(orderIndex, cartId)
+        }.map {
+            case results: RequestSuccess[GetResponse] => results.result.to[Order].status
+        }
+
+    override def pushToQueue(kitchenItem: KitchenItem): Future[KitchenItem] =
+        elastic.execute {
+            indexInto(itemsQueueIndex).id(kitchenItem.id).doc(kitchenItem)
+        }.flatMap {
+            case _: RequestSuccess[IndexResponse] =>
+                elastic.execute {
+                    search(itemsQueueIndex).query(
+                        termQuery("cartId", kitchenItem.cartId)
+                    )
+                }.flatMap {
+                    case results: RequestSuccess[SearchResponse] =>
+                        val cookedItems = results.result.to[KitchenItem].groupBy(_.menuItemId).map {
+                            case (menuItemId, items) => menuItemId -> items.size
+                        }
+                        elastic.execute {
+                            get(orderIndex, kitchenItem.cartId)
+                        }.flatMap {
+                            case results: RequestSuccess[GetResponse] =>
+                                val order = results.result.to[Order]
+                                val items = Map.from(order.items.map(item => item.menuItemId -> item.amount))
+                                if (cookedItems == items)
+                                    changeStatus(order.cartId, CookedOrder).map(_ => kitchenItem)
+                                else
+                                    Future(kitchenItem)
+                        }
+                }
+        }
+
+    override protected def changeStatus(cartId: CartId, status: OrderStatus): Future[Response[UpdateResponse]] =
+        elastic.execute {
+            updateById(orderIndex, cartId).doc("status" -> status.status)
         }
 }

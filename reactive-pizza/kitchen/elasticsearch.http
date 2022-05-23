@@ -1,0 +1,11 @@
+###
+GET localhost:9200/route-card
+
+###
+GET localhost:9200/route-card/_search
+
+###
+GET localhost:9200/kitchen-item
+
+###
+GET localhost:9200/kitchen-item/_search

@@ -1,9 +1,20 @@
 ###
 GET localhost:8083/orders
-Content-Type: application/json
 
 ###
-PUT localhost:8083/take
-Content-Type: application/json
+POST localhost:8083/take/1
 
-"1"
+###
+GET localhost:8083/status/1
+
+###
+POST localhost:8083/form/1
+
+###
+GET localhost:8083/status/1
+
+###
+POST localhost:8083/complete/1
+
+###
+GET localhost:8083/status/1

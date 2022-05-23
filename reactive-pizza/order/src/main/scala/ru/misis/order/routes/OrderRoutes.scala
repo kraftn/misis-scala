@@ -12,6 +12,7 @@ import ru.misis.event.EventJsonFormats._
 import spray.json._
 
 class OrderRoutes(orderService: OrderCommands)(implicit val system: ActorSystem){
+
     val routes: Route =
     path("orders") {
         get {
@@ -20,10 +21,31 @@ class OrderRoutes(orderService: OrderCommands)(implicit val system: ActorSystem)
             }
         }
     } ~
-    path("take") {
-        (put & entity(as[String])) { json =>
-            onSuccess(orderService.takeOrder(json.parseJson.convertTo[String])) { _ =>
+    path("take" / Segment) { cartId =>
+        post {
+            onSuccess(orderService.takeOrder(cartId)) { _ =>
                 complete(StatusCodes.OK)
+            }
+        }
+    } ~
+    path("form" / Segment) { cartId =>
+        post {
+            onSuccess(orderService.formOrder(cartId)) { _ =>
+                complete(StatusCodes.OK)
+            }
+        }
+    } ~
+    path("complete" / Segment) { cartId =>
+        post {
+            onSuccess(orderService.completeOrder(cartId)) { _ =>
+                complete(StatusCodes.OK)
+            }
+        }
+    } ~
+    path("status" / Segment) { cartId =>
+        get {
+            onSuccess(orderService.getStatus(cartId)) { status =>
+                complete(status)
             }
         }
     }

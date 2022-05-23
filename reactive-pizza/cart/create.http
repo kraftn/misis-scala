@@ -6,26 +6,26 @@ Content-Type: application/json
 POST localhost:8081/cart/1/add
 Content-Type: application/json
 
-"8b15ba86-832a-4038-a963-f1f0670f309c"
+"8ed199c4-5ae9-429c-8b68-193521d349f6"
 
 ###
 POST localhost:8081/cart/1/add
 Content-Type: application/json
 
-"3fac67f4-d41c-4fef-bda7-d1a1ddc9befd"
+"293abaa4-3a13-48fb-914f-f77168723d38"
 
 ###
 POST localhost:8081/cart/1/add
 Content-Type: application/json
 
-"57702cb5-6844-4224-8694-b0367405e18b"
+"c1601a58-6194-42e5-92a8-5f7b31464fee"
 
 ###
 PUT localhost:8081/cart/1/change
 Content-Type: application/json
 
 {
-  "menuItemId": "57702cb5-6844-4224-8694-b0367405e18b",
+  "menuItemId": "8ed199c4-5ae9-429c-8b68-193521d349f6",
   "amount": 2
 }
 
@@ -34,7 +34,7 @@ PUT localhost:8081/cart/1/change
 Content-Type: application/json
 
 {
-  "menuItemId": "3fac67f4-d41c-4fef-bda7-d1a1ddc9befd",
+  "menuItemId": "293abaa4-3a13-48fb-914f-f77168723d38",
   "amount": 0
 }
 

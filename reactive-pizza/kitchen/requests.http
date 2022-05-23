@@ -1,0 +1,10 @@
+###
+GET http://localhost:8084/items
+
+###
+POST http://localhost:8084/execute/825683ab-2ddd-4298-b620-5c9407cba5c5
+Content-Type: application/json
+
+###
+GET http://localhost:8084/ready/825683ab-2ddd-4298-b620-5c9407cba5c5
+Content-Type: application/json

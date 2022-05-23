@@ -23,8 +23,10 @@ class CartRoutes(cartService: CartCommands)(implicit val system: ActorSystem,
     val routes: Route =
     path("menu") {
         get {
-            onSuccess(cartService.getMenu) { menu =>
-                complete(menu)
+            rejectEmptyResponse {
+                onSuccess(cartService.getMenu) { menu =>
+                    complete(menu)
+                }
             }
         }
     } ~

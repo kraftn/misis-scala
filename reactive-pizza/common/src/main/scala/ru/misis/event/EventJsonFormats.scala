@@ -1,12 +1,16 @@
 package ru.misis.event
 
+import com.sksamuel.elastic4s.{HitReader, Indexable}
 import ru.misis.event.Cart._
+import ru.misis.event.Kitchen.ItemCooked
 import ru.misis.event.Menu._
-import ru.misis.event.Order.{KitchenItem, OrderTaken}
+import ru.misis.event.Order.{KitchenItem, OrderCompleted, OrderTaken}
 import ru.misis.event.OrderStatuses.OrderStatus
 import ru.misis.event.Payment.{Cheque, PaymentMade}
 import spray.json._
 import spray.json.DefaultJsonProtocol._
+
+import scala.util.Try
 
 object EventJsonFormats {
     implicit val productJsonFormat = jsonFormat2(Product)
@@ -26,6 +30,8 @@ object EventJsonFormats {
     implicit val chequeFormat = jsonFormat3(Cheque)
 
     implicit val kitchenItemFormat = jsonFormat4(KitchenItem)
+    implicit val kitchenItemHitReader: HitReader[KitchenItem] = hit => Try(hit.sourceAsString.parseJson.convertTo[KitchenItem])
+    implicit val kitchenItemIndexable: Indexable[KitchenItem] = item => item.toJson.compactPrint
 
     implicit val menuCreatedFormat = jsonFormat1(MenuCreated)
     implicit val routeCardCreatedFormat = jsonFormat1(RouteCardCreated)
@@ -34,4 +40,7 @@ object EventJsonFormats {
     implicit val paymentMadeFormat = jsonFormat1(PaymentMade)
 
     implicit val orderTakenFormat = jsonFormat1(OrderTaken)
+    implicit val orderCompletedFormat = jsonFormat1(OrderCompleted)
+
+    implicit val itemCookedFormat = jsonFormat1(ItemCooked)
 }

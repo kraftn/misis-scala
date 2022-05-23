@@ -24,7 +24,7 @@ class MenuCommandImpl(elastic: ElasticClient)
 
     val itemIndex = "item"
 
-    elastic.execute { deleteIndex(itemIndex) }
+    /*elastic.execute { deleteIndex(itemIndex) }
         .flatMap { _ =>
             elastic.execute {
                 createIndex(itemIndex).mapping(
@@ -46,7 +46,7 @@ class MenuCommandImpl(elastic: ElasticClient)
                     )
                 )
             }
-        }
+        }*/
 
     override def listItems(): Future[Seq[Item]] = {
         elastic.execute(search(itemIndex))
