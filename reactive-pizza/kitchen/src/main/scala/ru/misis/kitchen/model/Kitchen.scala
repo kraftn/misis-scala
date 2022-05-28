@@ -1,5 +1,6 @@
 package ru.misis.kitchen.model
 
+import ru.misis.event.KitchenItemStatuses.KitchenItemStatus
 import ru.misis.event.Menu._
 import ru.misis.event.Order.KitchenItem
 
@@ -12,9 +13,11 @@ trait KitchenCommands {
 
     def listItems(): Future[Seq[KitchenItem]]
 
-    def executeNextRouteStage(kitchenItemId: ItemId): Future[Option[RouteStage]]
+    def getDuration(menuItemId: ItemId): Future[Int]
 
-    def isItemReady(kitchenItemId: ItemId): Future[Boolean]
+    def getRouteStages(kitchenItemId: ItemId): Future[Seq[RouteStage]]
 
-    protected def incrementRouteStage(kitchenItemId: ItemId): Future[KitchenItem]
+    def getItemStatus(kitchenItemId: ItemId): Future[KitchenItemStatus]
+
+    def updateItemStatus(kitchenItemId: ItemId, status: KitchenItemStatus): Future[KitchenItem]
 }

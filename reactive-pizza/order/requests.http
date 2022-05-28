@@ -6,15 +6,3 @@ POST localhost:8083/take/1
 
 ###
 GET localhost:8083/status/1
-
-###
-POST localhost:8083/form/1
-
-###
-GET localhost:8083/status/1
-
-###
-POST localhost:8083/complete/1
-
-###
-GET localhost:8083/status/1

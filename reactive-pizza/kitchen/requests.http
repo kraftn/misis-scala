@@ -2,9 +2,7 @@
 GET http://localhost:8084/items
 
 ###
-POST http://localhost:8084/execute/825683ab-2ddd-4298-b620-5c9407cba5c5
-Content-Type: application/json
+GET http://localhost:8084/route-card/e32e7bfb-1ffe-4576-be28-686218a782de
 
 ###
-GET http://localhost:8084/ready/825683ab-2ddd-4298-b620-5c9407cba5c5
-Content-Type: application/json
+GET http://localhost:8084/status/e32e7bfb-1ffe-4576-be28-686218a782de

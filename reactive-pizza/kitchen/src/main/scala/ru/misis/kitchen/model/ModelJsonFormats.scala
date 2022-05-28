@@ -12,4 +12,7 @@ import scala.util.Try
 object ModelJsonFormats {
     implicit val routeItemHitReader: HitReader[RouteItem] = hit => Try(hit.sourceAsString.parseJson.convertTo[RouteItem])
     implicit val routeItemIndexable: Indexable[RouteItem] = routeItem => routeItem.toJson.compactPrint
+
+    implicit val kitchenItemHitReader: HitReader[KitchenItem] = hit => Try(hit.sourceAsString.parseJson.convertTo[KitchenItem])
+    implicit val kitchenItemIndexable: Indexable[KitchenItem] = item => item.toJson.compactPrint
 }

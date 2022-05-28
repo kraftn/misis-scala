@@ -9,9 +9,13 @@ import io.scalaland.chimney.dsl._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
 import ru.misis.order.model.OrderCommands
 import ru.misis.event.EventJsonFormats._
+import ru.misis.event.OrderStatuses.TakenOrder
 import spray.json._
 
-class OrderRoutes(orderService: OrderCommands)(implicit val system: ActorSystem){
+import scala.concurrent.ExecutionContext
+
+class OrderRoutes(orderService: OrderCommands)(implicit val system: ActorSystem,
+                                               executionContext: ExecutionContext) {
 
     val routes: Route =
     path("orders") {
@@ -23,28 +27,16 @@ class OrderRoutes(orderService: OrderCommands)(implicit val system: ActorSystem)
     } ~
     path("take" / Segment) { cartId =>
         post {
-            onSuccess(orderService.takeOrder(cartId)) { _ =>
-                complete(StatusCodes.OK)
-            }
-        }
-    } ~
-    path("form" / Segment) { cartId =>
-        post {
-            onSuccess(orderService.formOrder(cartId)) { _ =>
-                complete(StatusCodes.OK)
-            }
-        }
-    } ~
-    path("complete" / Segment) { cartId =>
-        post {
-            onSuccess(orderService.completeOrder(cartId)) { _ =>
+            onSuccess(orderService.takeOrder(cartId).flatMap { _ =>
+                orderService.updateOrderStatus(cartId, TakenOrder)
+            }) { _ =>
                 complete(StatusCodes.OK)
             }
         }
     } ~
     path("status" / Segment) { cartId =>
         get {
-            onSuccess(orderService.getStatus(cartId)) { status =>
+            onSuccess(orderService.getOrderStatus(cartId)) { status =>
                 complete(status)
             }
         }

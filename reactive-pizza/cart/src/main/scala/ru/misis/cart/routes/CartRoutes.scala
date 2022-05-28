@@ -49,8 +49,7 @@ class CartRoutes(cartService: CartCommands)(implicit val system: ActorSystem,
         } ~
         path("pay") {
             post {
-                onSuccess(cartService.createOrder(cartId, NotPaidOrder)
-                    .flatMap(cartService.payForOrder)) { _ =>
+                onSuccess(cartService.createOrder(cartId, NotPaidOrder).flatMap(cartService.payForOrder)) { _ =>
                     complete(StatusCodes.OK)
                 }
             }

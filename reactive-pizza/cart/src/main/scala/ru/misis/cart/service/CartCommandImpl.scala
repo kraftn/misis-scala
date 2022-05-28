@@ -144,7 +144,8 @@ class CartCommandImpl(elastic: ElasticClient)(implicit executionContext: Executi
                         menuItemId = menuItem.id,
                         name = menuItem.name,
                         price = menuItem.price,
-                        amount = cartItem.amount
+                        amount = cartItem.amount,
+                        cookedAmount = 0
                     )
                     Order(cartId, orderItems, status)
                 }

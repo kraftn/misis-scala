@@ -1,7 +1,7 @@
 package ru.misis.event
 
 import ru.misis.event.Menu.ItemId
-import OrderStatuses.OrderStatus
+import ru.misis.event.OrderStatuses.OrderStatus
 
 object Cart {
     type CartId = String
@@ -9,7 +9,8 @@ object Cart {
     case class OrderItem(menuItemId: ItemId,
                          name: String,
                          price: Double,
-                         amount: Int)
+                         amount: Int,
+                         cookedAmount: Int)
 
     case class Order(cartId: CartId, items: Seq[OrderItem], status: OrderStatus)
 
@@ -22,11 +23,9 @@ object OrderStatuses {
     case object NotPaidOrder extends OrderStatus("Не оплачен")
     case object PaidOrder extends OrderStatus("Оплачен")
     case object TakenOrder extends OrderStatus("Принят")
-    case object CookedOrder extends OrderStatus("Приготовлен")
-    case object FormedOrder extends OrderStatus("Сформирован")
     case object CompletedOrder extends OrderStatus("Завершён")
 
-    val orderStatuses = List(NotPaidOrder, PaidOrder, TakenOrder, CookedOrder, FormedOrder, CompletedOrder)
+    val orderStatuses = List(NotPaidOrder, PaidOrder, TakenOrder, CompletedOrder)
 
     object OrderStatus {
         def fromString(status: String): Option[OrderStatus] = orderStatuses.find(_.status == status)
