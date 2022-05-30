@@ -14,7 +14,7 @@ object PaymentApp {
   private def startHttpServer(routes: Route)(implicit system: ActorSystem): Unit = {
     import system.dispatcher
 
-    val futureBinding = Http().newServerAt("localhost", 8082).bind(routes)
+    val futureBinding = Http().newServerAt("0.0.0.0", 8082).bind(routes)
     futureBinding.onComplete {
       case Success(binding) =>
         val address = binding.localAddress

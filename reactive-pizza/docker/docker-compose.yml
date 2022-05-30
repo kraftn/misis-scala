@@ -22,3 +22,87 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper-pizza:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+
+  menu:
+    image: reactive-pizza-menu
+    container_name: reactive-pizza-menu
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: menu
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+    ports:
+      - 8080:8080
+
+  payment:
+    image: reactive-pizza-payment
+    container_name: reactive-pizza-payment
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: payment
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+    ports:
+      - 8082:8082
+
+  cart:
+    image: reactive-pizza-cart
+    container_name: reactive-pizza-cart
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: cart
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+      PAYMENT_SERVER: payment:8082
+    ports:
+      - 8081:8081
+
+  order:
+    image: reactive-pizza-order
+    container_name: reactive-pizza-order
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: order
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+    ports:
+      - 8083:8083
+
+  kitchen:
+    image: reactive-pizza-kitchen
+    container_name: reactive-pizza-kitchen
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: kitchen
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+    ports:
+      - 8084:8084
+
+  waiter-bot:
+    image: reactive-pizza-waiter-bot
+    container_name: reactive-pizza-waiter-bot
+    build:
+      dockerfile: ./docker/Dockerfile
+      context: ../
+      args:
+        SERVICE: waiter-bot
+    environment:
+      KAFKA: kafka-pizza:9092
+      ELASTIC: elasticsearch:9200
+      ORDER_SERVER: order:8083

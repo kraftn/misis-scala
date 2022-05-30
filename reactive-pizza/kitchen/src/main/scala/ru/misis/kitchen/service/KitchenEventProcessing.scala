@@ -33,7 +33,7 @@ class KitchenEventProcessing(kitchenService: KitchenCommands)
         .runWith(Sink.ignore)
 
     kafkaSource[ItemReadyForCooking]
-        .mapAsync(1) { itemReadyForCooking =>
+        .mapAsync(10) { itemReadyForCooking =>
             logger.info(s"Item ready for cooking ${itemReadyForCooking.toJson.prettyPrint}")
             val kitchenItem = itemReadyForCooking.item
             kitchenService.saveItem(kitchenItem)

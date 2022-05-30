@@ -2,7 +2,7 @@
 GET http://localhost:8084/items
 
 ###
-GET http://localhost:8084/route-card/e32e7bfb-1ffe-4576-be28-686218a782de
+GET http://localhost:8084/route-card/10f16537-7299-4595-98ac-6ebae3765490
 
 ###
-GET http://localhost:8084/status/e32e7bfb-1ffe-4576-be28-686218a782de
+GET http://localhost:8084/status/f338c8fc-1914-4e66-afaf-ad212b09e5a4

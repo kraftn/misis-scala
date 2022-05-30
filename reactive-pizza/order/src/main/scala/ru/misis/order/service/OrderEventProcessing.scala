@@ -37,12 +37,13 @@ class OrderEventProcessing(orderService: OrderCommands)
             logger.info(s"Order ready for cooking ${event.toJson.prettyPrint}")
             val order = event.order
             order.items.flatMap { orderItem =>
-                val kitchenItem = KitchenItem(
-                    cartId = order.cartId,
-                    menuItemId = orderItem.menuItemId,
-                    status = NotCookedItem
-                )
-                (1 to orderItem.amount).map(_ => kitchenItem)
+                (1 to orderItem.amount).map { _ =>
+                    KitchenItem(
+                        cartId = order.cartId,
+                        menuItemId = orderItem.menuItemId,
+                        status = NotCookedItem
+                    )
+                }
             }
         }
         .map(kitchenItem => ItemReadyForCooking(kitchenItem))

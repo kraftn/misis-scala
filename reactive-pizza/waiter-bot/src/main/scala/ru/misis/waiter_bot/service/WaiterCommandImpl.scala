@@ -17,7 +17,7 @@ class WaiterCommandImpl(implicit executionContext: ExecutionContext,
     override def takeOrder(cartId: CartId): Future[HttpResponse] = {
         val request = HttpRequest(
             method = HttpMethods.POST,
-            uri = s"${sys.env("ORDER_HTTP")}/take/$cartId",
+            uri = s"http://${sys.env("ORDER_SERVER")}/take/$cartId",
         )
         Http().singleRequest(request)
     }

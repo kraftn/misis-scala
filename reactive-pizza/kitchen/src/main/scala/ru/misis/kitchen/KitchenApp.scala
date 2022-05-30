@@ -16,7 +16,7 @@ object KitchenApp {
   private def startHttpServer(routes: Route)(implicit system: ActorSystem): Unit = {
     import system.dispatcher
 
-    val futureBinding = Http().newServerAt("localhost", 8084).bind(routes)
+    val futureBinding = Http().newServerAt("0.0.0.0", 8084).bind(routes)
     futureBinding.onComplete {
       case Success(binding) =>
         val address = binding.localAddress
@@ -27,7 +27,7 @@ object KitchenApp {
     }
   }
 
-  val props = ElasticProperties("http://localhost:9200")
+  val props = ElasticProperties(s"http://${sys.env("ELASTIC")}")
   val elastic = ElasticClient(JavaClient(props))
 
   def main(args: Array[String]): Unit = {

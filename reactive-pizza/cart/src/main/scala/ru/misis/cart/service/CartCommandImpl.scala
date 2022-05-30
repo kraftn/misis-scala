@@ -122,7 +122,7 @@ class CartCommandImpl(elastic: ElasticClient)(implicit executionContext: Executi
     override def payForOrder(order: Order): Future[HttpResponse] = {
         val request = HttpRequest(
             method = HttpMethods.POST,
-            uri = sys.env("PAYMENT_ENDPOINT"),
+            uri = s"http://${sys.env("PAYMENT_SERVER")}/pay",
             entity = HttpEntity(ContentTypes.`application/json`, order.toJson.compactPrint)
         )
         Http().singleRequest(request)
