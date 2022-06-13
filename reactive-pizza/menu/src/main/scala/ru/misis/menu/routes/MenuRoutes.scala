@@ -60,6 +60,13 @@ class MenuRoutes(menuService: MenuCommands)(implicit val system: ActorSystem){
                 complete(StatusCodes.OK)
             }
         }
+    } ~
+    path("publish-all") {
+        post {
+            onSuccess(menuService.publishAllItems()) { _ =>
+                complete(StatusCodes.OK)
+            }
+        }
     }
 }
 

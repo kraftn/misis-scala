@@ -107,4 +107,13 @@ class MenuCommandImpl(elastic: ElasticClient)
     override def createRouteMap(items: Seq[Item]): Seq[RouteItem] = {
         items.map(item => RouteItem(item.id, item.routeStages))
     }
+
+    override def publishAllItems(): Future[Done] =
+        elastic.execute {
+            search(itemIndex).size(1000)
+        }.flatMap {
+            case results: RequestSuccess[SearchResponse] =>
+                val items = results.result.to[Item]
+                publishEvent(ItemsEvent(items))
+        }
 }

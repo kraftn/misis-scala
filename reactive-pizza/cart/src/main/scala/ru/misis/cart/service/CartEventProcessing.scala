@@ -24,7 +24,7 @@ class CartEventProcessing(cartService: CartCommands)
     private val logger = LoggerFactory.getLogger(this.getClass)
 
     kafkaSource[MenuCreated]
-        .map { menuCreated =>
+        .mapAsync(1) { menuCreated =>
             logger.info(s"Menu created ${menuCreated.toJson.prettyPrint}")
             cartService.replaceMenu(menuCreated.menu)
         }

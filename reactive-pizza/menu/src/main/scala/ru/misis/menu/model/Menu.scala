@@ -22,6 +22,8 @@ trait MenuCommands {
     def createMenu(items: Seq[Item]): Menu
 
     def createRouteMap(items: Seq[Item]): Seq[RouteItem]
+
+    def publishAllItems(): Future[Done]
 }
 
 object Objects {

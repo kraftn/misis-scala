@@ -22,4 +22,4 @@ WORKDIR /app
 COPY --from=builder /build/$SERVICE/target/universal/stage/lib lib
 COPY --from=builder /build/$SERVICE/target/universal/stage/bin bin
 ENV SERVICE_EXE=$SERVICE
-ENTRYPOINT sleep 90 && bin/$SERVICE_EXE
+ENTRYPOINT sleep 60 && bin/$SERVICE_EXE

@@ -32,8 +32,8 @@ services:
       args:
         SERVICE: menu
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
+      KAFKA:
+      ELASTIC:
     ports:
       - 8080:8080
 
@@ -46,8 +46,8 @@ services:
       args:
         SERVICE: payment
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
+      KAFKA:
+      ELASTIC:
     ports:
       - 8082:8082
 
@@ -60,9 +60,9 @@ services:
       args:
         SERVICE: cart
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
-      PAYMENT_SERVER: payment:8082
+      KAFKA:
+      ELASTIC:
+      PAYMENT_SERVER:
     ports:
       - 8081:8081
 
@@ -75,8 +75,8 @@ services:
       args:
         SERVICE: order
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
+      KAFKA:
+      ELASTIC:
     ports:
       - 8083:8083
 
@@ -89,8 +89,8 @@ services:
       args:
         SERVICE: kitchen
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
+      KAFKA:
+      ELASTIC:
     ports:
       - 8084:8084
 
@@ -103,6 +103,6 @@ services:
       args:
         SERVICE: waiter-bot
     environment:
-      KAFKA: kafka-pizza:9092
-      ELASTIC: elasticsearch:9200
-      ORDER_SERVER: order:8083
+      KAFKA:
+      ELASTIC:
+      ORDER_SERVER:

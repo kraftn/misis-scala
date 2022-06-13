@@ -9,3 +9,6 @@ GET localhost:9200/cart/_search
 
 ###
 GET localhost:9200/menu/_search
+
+###
+GET localhost:9200/_cat/indices

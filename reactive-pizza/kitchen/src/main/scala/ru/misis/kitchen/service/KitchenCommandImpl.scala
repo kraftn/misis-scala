@@ -93,15 +93,6 @@ class KitchenCommandImpl(elastic: ElasticClient)
             case results: RequestSuccess[SearchResponse] => results.result.to[KitchenItem]
         }
 
-    override def getDuration(menuItemId: ItemId): Future[Int] =
-        elastic.execute {
-            get(routeCardIndex, menuItemId)
-        }.map {
-            case results: RequestSuccess[GetResponse] =>
-                val routeCard = results.result.to[RouteItem]
-                routeCard.routeStages.foldRight(0)((routeStage, acc) => routeStage.duration + acc)
-        }
-
     override def getRouteStages(kitchenItemId: ItemId): Future[Seq[RouteStage]] = {
         elastic.execute {
             get(kitchenItemIndex, kitchenItemId)
